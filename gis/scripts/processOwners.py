@@ -1,6 +1,7 @@
 # This script scans the WUP_SHAPEFILE shapefile and updates empty Owner_Id's
 # with the correct ID. This is meant to be a one time data load script so it
-# is on the slower side.
+# is on the slower side although well indexed shapefiles should be pretty
+# quick to process.
 import arcpy, datetime
 from arcpy import env  
 from settings import *
@@ -9,11 +10,11 @@ from settings import *
 def loadOwner(data):
         # Prepare the where clause
         where = "OWNER = '" + data[1].replace("'", "''") + "' AND " + \
-                "ADDRESS_ONE = '" + data[2] + "' AND "
+                "ADDRESS_ONE = '" + data[2].replace("'", "''") + "' AND "
         offset = 1
         if len(data) == 7:
                 offset = 0
-                where = where + "ADDRESS_TWO = '" + data[3] + "' AND "
+                where = where + "ADDRESS_TWO = '" + data[3].replace("'", "''") + "' AND "
         where = where + "CITY = '" + data[4 - offset].replace("'", "''") + "' AND " + \
                         "STATE = '" + data[5 - offset] + "' AND " + \
                         "ZIPCODE = '" + str(data[6 - offset]) + "'"
