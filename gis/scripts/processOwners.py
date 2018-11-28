@@ -62,10 +62,13 @@ def main():
 
         # Iterate over the features
         print "Processing..."
+        passed = 0
         updated = 0
         for row in cursor:
                 # Skip if the owner is already set
-                if row[2] <> 0: continue
+                if row[2] <> 0:
+                        passed = passed + 1
+                        continue
 
                 # Search for a result
                 result = search(row[0], row[1])
@@ -76,9 +79,12 @@ def main():
                         cursor.updateRow(row)
                         updated = updated + 1
 
+                # Update periodicly
+                if updated % 100 == 0: print "Updated: ", updated, "Passed:  ", passed
+
         # Notify the user
         print "Done"                                
-        print "Updated: ", updated
+        print "Updated: ", updated, "Passed:  ", passed
 
 
 if __name__ == '__main__':
