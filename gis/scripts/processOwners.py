@@ -1,21 +1,9 @@
-import arcpy, sys, os, fileinput, glob, string  
+# This script scans the WUP_SHAPEFILE shapefile and updates empty Owner_Id's
+# with the correct ID. This is meant to be a one time data load script so it
+# is on the slower side.
+import arcpy, datetime
 from arcpy import env  
-
 from settings import *
-
-# The reference files are unindexed, so opening a cursor and
-# scanning them is faster
-searchCursors = {}
-
-
-def load():
-        # Open search cursors on the secondary files
-        for key in WUP_COUNTIES:
-                values = WUP_COUNTIES.get(key)
-                path = values[0]
-                values = values[1:]
-                if '' in values: values.remove('')
-                searchCursors[key] = arcpy.da.SearchCursor(path, values)    
 
 
 def loadOwner(data):
@@ -29,62 +17,50 @@ def loadOwner(data):
         where = where + "CITY = '" + data[4 - offset].replace("'", "''") + "' AND " + \
                         "STATE = '" + data[5 - offset] + "' AND " + \
                         "ZIPCODE = '" + str(data[6 - offset]) + "'"
-        
-        owners = arcpy.da.SearchCursor(WUP_OWNERS, [ "OWNER_ID" ], where)
-        for row in owners:
-                return row[0]
-        print data[0]
+
+        # Since we expect only one match, return the first one
+        with arcpy.da.SearchCursor(WUP_OWNERS, [ "OWNER_ID" ], where) as cursor:
+                for row in cursor:
+                        return row[0]
         return None
 
 
-def search(pin, county):
-        # Check to make sure we have a valid county
-        if county not in searchCursors:
-                print 'County not found: ', county
-                return None
-
-        # Scan for the matching PIN
-        cursor = searchCursors.get(county)
-        cursor.reset()
-        for row in cursor:
-                if row[0] == pin: return row
-        return None
+def updateOwner(data, county_id):
+        # Check if the owner is set already
+        where =  "PIN = '" + data[0] + "' AND County_Id = " + str(county_id)
+        with arcpy.da.UpdateCursor(WUP_SHAPEFILE, [ "PIN", "Owner_Id" ], where) as cursor:
+                for row in cursor:
+                        if row[1] <> 0: continue
+                        # Owner was not set, so update it if we can find them
+                        owner_id = loadOwner(data)
+                        if owner_id is None: continue
+                        row[1] = owner_id
+                        cursor.updateRow(row)
 
 
 def main():
         # Prepare ArcGIS to work
-        print "Loading..."
+        print datetime.datetime.now(), "Loading..."
         env.workspace = WUP_WORKSPACE  
-          
-        # Prepare our cursors
-        cursor = arcpy.da.UpdateCursor(WUP_SHAPEFILE, [ "PIN", "County_Id", "Owner_Id" ])
-        load()
 
-        # Iterate over the features
-        print "Processing..."
-        passed = 0
-        updated = 0
-        for row in cursor:
-                # Skip if the owner is already set
-                if row[2] <> 0:
-                        passed = passed + 1
-                        continue
 
-                # Search for a result
-                result = search(row[0], row[1])
-                if result is not None :
-                        owner_id = loadOwner(result)
-                        if owner_id is None: continue
-                        row[2] = owner_id
-                        cursor.updateRow(row)
-                        updated = updated + 1
+        # Open search cursors on the secondary files
+        for key in WUP_COUNTIES:
+                print datetime.datetime.now(), "Processing County: ", key
+                values = WUP_COUNTIES.get(key)
+                path = values[0]
+                values = values[1:]
+                if '' in values: values.remove('')
 
-                # Update periodicly
-                if updated % 100 == 0: print "Updated: ", updated, "Passed:  ", passed
-
-        # Notify the user
-        print "Done"                                
-        print "Updated: ", updated, "Passed:  ", passed
+                # Iterate over the county plats, attempt to update the owners
+                print datetime.datetime.now(), "Feature Count: ", arcpy.GetCount_management(path)
+                count = 0
+                with arcpy.da.SearchCursor(path, values) as cursor:
+                        for row in cursor:
+                                updateOwner(row, key)
+                                count = count + 1
+                                if count % 100 == 0: print datetime.datetime.now(), "Processed: ", count
+                print datetime.datetime.now(), "Processed: ", count
 
 
 if __name__ == '__main__':
