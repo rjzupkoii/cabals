@@ -27,16 +27,26 @@ def loadOwner(data):
 
 
 def updateOwner(data, county_id):
+        # Return if the PIN is empty
+        if not bool(data[0].strip()): return
+
+        # Return if the PIN is invalid
+        if data[0] in [ 'ROW', 'UNDEFINED', 'Unknown' ]: return
+        
         # Check if the owner is set already
         where =  "PIN = '" + data[0] + "' AND County_Id = " + str(county_id)
         with arcpy.da.UpdateCursor(WUP_SHAPEFILE, [ "PIN", "Owner_Id" ], where) as cursor:
                 for row in cursor:
-                        if row[1] <> 0: continue
+                        # We only expect one match
+                        if row[1] <> 0: return
+                        
                         # Owner was not set, so update it if we can find them
                         owner_id = loadOwner(data)
-                        if owner_id is None: continue
+                        if owner_id is None: return
                         row[1] = owner_id
                         cursor.updateRow(row)
+                        return
+        print "WARNING: ", where
 
 
 def main():
@@ -44,6 +54,9 @@ def main():
         print datetime.datetime.now(), "Loading..."
         env.workspace = WUP_WORKSPACE  
 
+        # Make sure we have an index
+        # NOTE Shapefiles don't support mutiple indicies, they are composites instead
+        arcpy.AddIndex_management(WUP_SHAPEFILE, "PIN")
 
         # Open search cursors on the secondary files
         for key in WUP_COUNTIES:
@@ -60,7 +73,7 @@ def main():
                         for row in cursor:
                                 updateOwner(row, key)
                                 count = count + 1
-                                if count % 100 == 0: print datetime.datetime.now(), "Processed: ", count
+                                if count % 250 == 0: print datetime.datetime.now(), "Processed: ", count
                 print datetime.datetime.now(), "Processed: ", count
 
 
