@@ -33,15 +33,15 @@ def levenshtein_distance(a,b):
 
 
 def checkOwner(one, two):
-    empty = [ ' ', ' ', ' ', ' ', ' ' ]
-    
+
     # If the names are exactly the same, flag them
-    if one[1] == two[2]:
+    if one[1].strip() <> '' and one[1] == two[1]:
         csv.writer(open(NAME_MATCH, 'a'), delimiter=',', quotechar='"').writerow(one + two)
         return
 
-    # Return if we can't check the addresses
-    if one[2:] == empty or two[2:] == empty: return
+    # Skip if the name, or first two lines of the address are blank
+    if one[2].strip() == '' and one[3].strip() == '': return
+    if two[2].strip() == '' and two[3].strip() == '': return
 
     # Next, check to see if the addresses are exactly the same
     if one[2:] == two[2:]:
