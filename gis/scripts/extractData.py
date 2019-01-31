@@ -2,31 +2,39 @@ import arcpy, csv, datetime, numpy
 from arcpy import env
 from settings import *
 
+# Flags related to the GIS structure
 COLUMNS = [ 'OWNER_ID', 'NATIVE', 'FEDERAL', 'STATE_GOV', 'LOCAL_GOV', 'CFR', 'NIPFO', 'TRUST', 'FOREST_AC', 'WETLAND_AC', 'ACRES' ]
 OWNER_ID = 0
 FOREST_AC = 8
 WETLAND_AC = 9
 ACRES = 10
 
+# Trackers for total work
 discard = []
 processed = []
 
+# Trackers for labeled work
 indexing = []
-acres = {}
 forest = {}
-owners = {}
 wetland = {}
+acres = {}
 
+# Tracker for unlabeled work
+unclassified = {"forest":[], "wetland":[], "acres":[]}
+
+# Tracker for owners
+owners = {}
 
 def main(path):
     # Prepare to run
     env.workspace = WUP_WORKSPACE
-    for ndx in range(1, 7):
+    for ndx in range(1, 8):
         index = COLUMNS[ndx]
         indexing.append(index)
         forest[index] = []
         wetland[index] = []
         acres[index] = []
+    print indexing
 
     # Status update
     print path
@@ -52,11 +60,22 @@ def process(row):
     processed.append(row[ACRES])
 
     # Add the data to the relevent maps
+    found = False
     for ndx in range(0, len(indexing)):
+        # Pass if the label is not set
         if row[ndx + 1] == 0: continue
+
+        # Add them and note a label
+        found = True
         forest[indexing[ndx]].append(row[FOREST_AC])
         wetland[indexing[ndx]].append(row[WETLAND_AC])
         acres[indexing[ndx]].append(row[ACRES])
+
+    # Dump in the unclassified if a label was not set
+    if not found:
+        unclassified["forest"].append(row[FOREST_AC])
+        unclassified["wetland"].append(row[WETLAND_AC])
+        unclassified["acres"].append(row[ACRES])
 
     # Add the data to the owner map
     owner = row[OWNER_ID]
@@ -76,6 +95,9 @@ def write():
             writer.writerow([index, "forest", len(forest[index]), numpy.sum(forest[index]), numpy.mean(forest[index]), numpy.std(forest[index])])
             writer.writerow([index, "wetland", len(wetland[index]), numpy.sum(wetland[index]), numpy.mean(wetland[index]), numpy.std(wetland[index])])
             writer.writerow([index, "parcel", len(acres[index]), numpy.sum(acres[index]), numpy.mean(acres[index]), numpy.std(acres[index])])
+        writer.writerow(["UNCLASSIFIED", "forest", len(unclassified["forest"]), numpy.sum(unclassified["forest"]), numpy.mean(unclassified["forest"]), numpy.std(unclassified["forest"])])
+        writer.writerow(["UNCLASSIFIED", "wetland", len(unclassified["wetland"]), numpy.sum(unclassified["wetland"]), numpy.mean(unclassified["wetland"]), numpy.std(unclassified["wetland"])])
+        writer.writerow(["UNCLASSIFIED", "parcel", len(unclassified["acres"]), numpy.sum(unclassified["acres"]), numpy.mean(unclassified["acres"]), numpy.std(unclassified["acres"])])
 
     with open('owners.csv', 'wb') as out:
         writer = csv.writer(out, delimiter=',', quotechar='"')
