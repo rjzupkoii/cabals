@@ -1,1 +1,9 @@
+# Ignore GIS stuff
+/gis/data/
+/gis/working/
+
+# Ignore sensitive files
 /gis/scripts/settings.py
+
+# Ignore intermediate files
+*.pyc
