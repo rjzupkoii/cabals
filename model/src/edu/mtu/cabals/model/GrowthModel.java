@@ -103,9 +103,11 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				LandfireEvc evc = LandfireEvc.getEvc(wupEvc.get(ndx, ndy));
 				if (evc == null) { continue; }
 				
-				// TODO height to DBH
-				double treeHeight = evh.getMin() + (evh.getMax() - evh.getMin()) * random.nextDouble();
-				double dbh = treeHeight;
+				// Randomize the stand height and get the dbh
+				double min = (evh.getMin() > 2) ? evh.getMin() : 2;
+				double max = (evh.getMax() < reference.getMaximumHeight()) ? evh.getMax() : reference.getMaximumHeight(); 
+				double treeHeight = min + (max - min) * random.nextDouble();
+				double dbh = reference.heightToDbh(treeHeight);
 				
 				// TODO cover to count
 				int treeCover = random.nextInt((evc.getMax() - evc.getMin()) + 1) + evc.getMin();
