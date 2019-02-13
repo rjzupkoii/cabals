@@ -1,17 +1,20 @@
 package edu.mtu.cabals.model;
 
 import ec.util.MersenneTwisterFast;
-import edu.mtu.environment.GrowthModel;
+import edu.mtu.cabals.scorecard.WupScorecard;
 import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
+import edu.mtu.simulation.ForestSimException;
 import edu.mtu.simulation.Scorecard;
+import edu.mtu.simulation.parameters.ParseParameters;
 import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgent;
 
 @SuppressWarnings("serial")
 public class WupModel extends ForestSim {
 
-	private static Parameters parameters;
+	private static Parameters parameters = null;
+	private Scorecard scorecard = null;
 	
 	public WupModel(long seed) {
 		super(seed);
@@ -31,26 +34,22 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public String getDefaultCoverFile() {
-		// TODO Auto-generated method stub
-		return null;
+		return parameters.getNlcdRaster();
 	}
 
 	@Override
 	public String getDefaultOutputDirectory() {
-		// TODO Auto-generated method stub
-		return null;
+		return parameters.getOutputDirectory();
 	}
 
 	@Override
 	public String getDefaultParcelFile() {
-		// TODO Auto-generated method stub
-		return null;
+		return parameters.getParcelShapeFile();
 	}
 
 	@Override
 	public GrowthModel getGrowthModel() {
-		// TODO Auto-generated method stub
-		return null;
+		return new GrowthModel(getRandom());
 	}
 
 	@Override
@@ -61,8 +60,7 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public Object getModelParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		return getParameters();
 	}
 	
 	public static Parameters getParameters() {
@@ -71,20 +69,27 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public PolicyBase getPolicy() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Scorecard getScoreCard() {
-		// TODO Auto-generated method stub
-		return null;
+		if (scorecard == null) {
+			scorecard = new WupScorecard(getOutputDirectory());
+		}
+		return scorecard;
 	}
 
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
-		
+		try {
+			if (parameters != null) { return; }
+			parameters = new Parameters();
+			ParseParameters.read("data/settings.ini", parameters);
+		} catch (ForestSimException ex) {
+			System.err.println(ex);
+			System.exit(-1);
+		}
 	}
 
 	@Override
@@ -92,5 +97,4 @@ public class WupModel extends ForestSim {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 }

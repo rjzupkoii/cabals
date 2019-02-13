@@ -4,6 +4,9 @@ import edu.mtu.simulation.parameters.ParameterBase;
 
 public class Parameters extends ParameterBase {
 
+	// Model settings
+	private String outputDirectory;
+	
 	// GIS data
 	private String parcelShapeFile;
 	private String nlcdRaster;
@@ -26,6 +29,10 @@ public class Parameters extends ParameterBase {
 		return landfireCoverRaster;
 	}
 	
+	public String getOutputDirectory() {
+		return outputDirectory;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -40,5 +47,9 @@ public class Parameters extends ParameterBase {
 	
 	public void setLandfireCoverRaster(String value) {
 		landfireCoverRaster = value;
+	}
+
+	public void setOutputDirectory(String value) {
+		this.outputDirectory = value;
 	}
 }
