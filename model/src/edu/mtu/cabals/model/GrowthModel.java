@@ -15,8 +15,9 @@ import org.apache.commons.csv.CSVRecord;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.cabals.wup.AcerRebrum;
+import edu.mtu.cabals.wup.BetulaAlleghaniensis;
 import edu.mtu.cabals.wup.PinusStrobus;
-import edu.mtu.cabals.wup.WesternUPSpecies;
+import edu.mtu.cabals.wup.WupSpecies;
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.NlcdClassification;
 import edu.mtu.environment.Species;
@@ -35,13 +36,13 @@ import sim.io.geo.ArcInfoASCGridImporter;
 public class GrowthModel implements edu.mtu.environment.GrowthModel {
 	
 	// The set of reference plants to use for the growth patterns, use a sparse array for this
-	private final static WesternUPSpecies[] growthPatterns;
+	private final static WupSpecies[] growthPatterns;
 	static {
-		growthPatterns = new WesternUPSpecies[NlcdClassification.HighestValue + 1];
+		growthPatterns = new WupSpecies[NlcdClassification.HighestValue + 1];
 		growthPatterns[NlcdClassification.DeciduousForest.getValue()] = new AcerRebrum();
 		growthPatterns[NlcdClassification.EvergreenForest.getValue()] = new PinusStrobus();
-		growthPatterns[NlcdClassification.WoodyWetlands.getValue()] = new AcerRebrum();		// Based upon DNR readings, Red Maple appears to be a common tree in the woody wetlands
-		growthPatterns[NlcdClassification.MixedForest.getValue()] = new AcerRebrum();		// Based upon DNR readings
+		growthPatterns[NlcdClassification.WoodyWetlands.getValue()] = new BetulaAlleghaniensis();
+		growthPatterns[NlcdClassification.MixedForest.getValue()] = new AcerRebrum();
 	}
 	
 	private HashMap<String, double[][]> stockingGuides;
@@ -65,7 +66,7 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 
 		// Load the stocking guides
 		stockingGuides = new HashMap<String, double[][]>();
-		WesternUPSpecies key = new AcerRebrum();
+		WupSpecies key = new AcerRebrum();
 		stockingGuides.put(key.getName(), readStockingGuide(key.getDataFile(), forest.getAcresPerPixel()));
 		key = new PinusStrobus();
 		stockingGuides.put(key.getName(), readStockingGuide(key.getDataFile(), forest.getAcresPerPixel()));
@@ -95,7 +96,7 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				}
 				
 				// Note the species
-				WesternUPSpecies reference = (WesternUPSpecies)getSpecies(nlcd);
+				WupSpecies reference = (WupSpecies)getSpecies(nlcd);
 				
 				// Get the LANDFIRE bounds
 				LandfireEvh evh = LandfireEvh.getEvh(wupEvh.get(ndx, ndy));
@@ -128,7 +129,7 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 
 	@Override
 	public double[][] getStockingGuide(int nlcd) {
-		WesternUPSpecies species = growthPatterns[nlcd];
+		WupSpecies species = growthPatterns[nlcd];
 		return stockingGuides.get(species.getName());
 	}
 

@@ -7,7 +7,7 @@ import edu.mtu.utilities.Constants;
 // https://www.na.fs.fed.us/pubs/silvics_manual/volume_2/acer/rubrum.htm
 // http://www.nrs.fs.fed.us/pubs/rp/rp_nc257.pdf 
 // http://dnr.wi.gov/topic/ForestManagement/documents/24315/51.pdf
-public class AcerRebrum implements WesternUPSpecies {		
+public class AcerRebrum implements WupSpecies {		
 		
 	public final static double MaxHeight = 30d;
 	
@@ -23,11 +23,13 @@ public class AcerRebrum implements WesternUPSpecies {
 		return Math.exp(beta0 + (beta1 / dbh));
 	}
 	
-	// Get the height of the given stand using the height-diameter equation (Kershaw et al. 2008)
+	// Wykoff functional form, Lake States FVS Variant
 	public double getHeight(double dbh) {
-		double b1 = 29.007, b2 = 0.053, b3 = 1.175;	
-		double height = Constants.DbhTakenAt + b1 * Math.pow(1 - Math.pow(Math.E, -b2 * dbh), b3);
-		return height;
+		final double B1 = 4.3379, B2 = -3.8214;
+		
+		dbh /= 2.54;				// dbh in cm to in
+		double ht = 4.5 + Math.exp(B1 + B2/ (dbh + 1.0));
+		return (ht / 3.281);		// ht in ft to m
 	}
 	
 	/**
@@ -62,14 +64,6 @@ public class AcerRebrum implements WesternUPSpecies {
 		return "data/AcerRebrum.csv";
 	}
 	
-	public double getPulpwoodValue() {
-		return 37.00;		// Gwinn Forst MGMT Unit, Q1 2017
-	}
-	
-	public  double getSawtimberValue() {
-		return 479.75;		// Baraga Forest MGMT Unit, Q1 2017
-	}
-
 	@Override
 	public double getMaximumHeight() { return MaxHeight; }
 }
