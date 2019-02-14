@@ -6,6 +6,7 @@ public class Parameters extends ParameterBase {
 
 	// Model settings
 	private String outputDirectory;
+	private String pricesFile;
 	
 	// GIS data
 	private String parcelShapeFile;
@@ -33,6 +34,10 @@ public class Parameters extends ParameterBase {
 		return outputDirectory;
 	}
 	
+	public String getPricesFile() {
+		return pricesFile;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -50,6 +55,10 @@ public class Parameters extends ParameterBase {
 	}
 
 	public void setOutputDirectory(String value) {
-		this.outputDirectory = value;
+		outputDirectory = value;
+	}
+
+	public void setPricesFile(String value) {
+		pricesFile = value;
 	}
 }

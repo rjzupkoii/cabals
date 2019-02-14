@@ -64,6 +64,18 @@ public class WupModel extends ForestSim {
 	}
 	
 	public static Parameters getParameters() {
+		// Load the parameters if need be
+		if (parameters == null) {
+			try {
+				parameters = new Parameters();
+				ParseParameters.read("data/settings.ini", parameters);
+			} catch (ForestSimException ex) {
+				System.err.println(ex);
+				System.exit(-1);
+			}
+		}
+
+		// Return the parameters
 		return parameters;
 	}
 
@@ -82,14 +94,7 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public void initialize() {
-		try {
-			if (parameters != null) { return; }
-			parameters = new Parameters();
-			ParseParameters.read("data/settings.ini", parameters);
-		} catch (ForestSimException ex) {
-			System.err.println(ex);
-			System.exit(-1);
-		}
+		// TODO Auto-generated method stub
 	}
 
 	@Override
