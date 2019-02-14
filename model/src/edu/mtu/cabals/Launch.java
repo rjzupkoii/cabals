@@ -13,7 +13,7 @@ public class Launch {
 			fs.load();
 			return;
 		}
-		
+				
 		// Otherwise we are running on the command line, MASON arguments
 		ForestSim.load(WupModel.class, args);
 	}

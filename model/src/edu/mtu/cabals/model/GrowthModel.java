@@ -9,6 +9,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -35,6 +36,8 @@ import sim.io.geo.ArcInfoASCGridImporter;
  */
 public class GrowthModel implements edu.mtu.environment.GrowthModel {
 	
+	private static Logger Log = Logger.getLogger(GrowthModel.class.getName());
+	
 	// The set of reference plants to use for the growth patterns, use a sparse array for this
 	private final static WupSpecies[] growthPatterns;
 	static {
@@ -57,6 +60,7 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 	
 	@Override
 	public void calculateInitialStands() {
+		Log.entering("GrowthModel", "calculateInitialStands");
 	
 		// Get the relevant data from ForestSim
 		Forest forest = Forest.getInstance();
@@ -120,6 +124,19 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				ageGrid.set(ndx, ndy, (int)(dbh / reference.getDbhGrowth()));
 			}
 		}
+		
+		// Finish setting up the geometric grids
+		GeomGridField standDiameter = new GeomGridField(dbhGrid);
+		standDiameter.setPixelHeight(landCover.getPixelHeight());
+		standDiameter.setPixelWidth(landCover.getPixelWidth());
+		standDiameter.setMBR(landCover.getMBR());
+				
+		// Pass the updates along to the forest
+		Forest.getInstance().setStandAgeMap(ageGrid);
+		Forest.getInstance().setTreeCountMap(countGrid);
+		Forest.getInstance().setStandDiameterMap(standDiameter);
+		
+		Log.exiting("GrowthModel", "calculateInitialStands");
 	}
 
 	@Override
