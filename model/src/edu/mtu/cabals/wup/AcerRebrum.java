@@ -49,7 +49,7 @@ public class AcerRebrum implements WupSpecies {
 	}
 
 	public String getName() {
-		return "Red Maple";
+		return "RED MAPLE";
 	}
 
 	public double getDbhGrowth() {

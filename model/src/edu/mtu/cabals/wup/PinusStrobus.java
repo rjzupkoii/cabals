@@ -47,7 +47,7 @@ public class PinusStrobus implements WupSpecies {
 	}
 
 	public String getName() {
-		return "Eastern White Pine";
+		return "WHITE PINE";
 	}
 
 	public double getDbhGrowth() {
