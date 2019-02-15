@@ -17,8 +17,8 @@ public class TimberMarketplaceTests {
 		TimberMarketplace tm = TimberMarketplace.getInstance();
 		tm.load("data\\prices.csv", new Random());
 		
-		System.out.println(tm.getPulpwoodPrice(new AcerRebrum()));
-		Assert.assertNotEquals(0.0, tm.getPulpwoodPrice(new AcerRebrum()));
-		Assert.assertNotEquals(0.0, tm.getSawlogPrice(new AcerRebrum()));
+		System.out.println(tm.getPrice(new AcerRebrum(), 27.94));
+		Assert.assertNotEquals(0.0, tm.getPrice(new AcerRebrum(), 27.94));
+		Assert.assertNotEquals(0.0, tm.getPrice(new AcerRebrum(), 27.94));
 	}
 }

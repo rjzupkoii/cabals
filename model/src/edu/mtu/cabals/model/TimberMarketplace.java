@@ -18,8 +18,13 @@ import edu.mtu.cabals.wup.WupSpecies;
 public class TimberMarketplace {
 
 	private static TimberMarketplace instance;
-	private HashMap<String, Double> pulpwood;
-	private HashMap<String, Double> sawlog;
+	
+	private final static int Pulpwood = 0;
+	private final static int Sawlog = 1;
+	private final static int Size = 0;
+	private final static int Price = 1;
+	
+	private HashMap<String, Double[][]> prices;
 	
 	private TimberMarketplace() { }
 	
@@ -29,27 +34,23 @@ public class TimberMarketplace {
 		}
 		return instance;
 	}
-	
-	/**
-	 * Get the current pulpwood price for the given species.
-	 */
-	public double getPulpwoodPrice(WupSpecies species) {
-		if (!pulpwood.containsKey(species.getName())) {
-			return 0.0;
-		}
-		return pulpwood.get(species.getName());
-	}
-	
-	/**
-	 * Get the current sawlog price for the given species.
-	 */
-	public double getSawlogPrice(WupSpecies species) {
-		if (!sawlog.containsKey(species.getName())) {
-			return 0.0;
-		}
-		return sawlog.get(species.getName());
-	}
 		
+	/**
+	 * Get the current price for the species at the given dbh.
+	 */
+	public double getPrice(WupSpecies species, double dbh) {
+		// Do we have prices for the species?
+		if (!prices.containsKey(species.getName())) {
+			return 0;
+		}
+		
+		// Check the prices
+		Double[][] chart = prices.get(species.getName());
+		if (dbh < chart[Pulpwood][Size]) { return 0; }
+		if (chart[Pulpwood][Size] < dbh && dbh < chart[Sawlog][Size]) { return chart[Pulpwood][Price]; }
+		return chart[Sawlog][Price];
+	}
+			
 	/**
 	 * Load the prices file for the timber marketplace.
 	 */
@@ -60,28 +61,26 @@ public class TimberMarketplace {
 			Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
 			
 			// Load the data
-			pulpwood = new HashMap<String, Double>();
-			sawlog = new HashMap<String, Double>();
+			prices = new HashMap<String, Double[][]>();
 			for (CSVRecord record : records) {
-				// Select the correct map
-				HashMap<String, Double> map = null;
-				switch (record.get("PRODUCT")) {
-				case "SAWTIMBER": map = sawlog;
-					break;
-				case "PULPWOOD": map = pulpwood;
-					break;
-				default:
-					System.err.println("Unknown product type (discarding): " + record.get("PRODUCT"));
-					continue;
+				// Have we seen this before?
+				String key = record.get("SPECIES");
+				if (!prices.containsKey(key)) {
+					prices.put(key, new Double[2][2]);
 				}
 				
 				// Load the data
+				double dbh = Double.parseDouble(record.get("DBH"));
 				double mean = Double.parseDouble(record.get("MEAN"));
 				double sd = Double.parseDouble(record.get("SD"));
+
+				// Note the correct index, note this can break easily as well
+				int index = record.get("PRODUCT").equals("SAWTIMBER") ? Sawlog : Pulpwood;
 				
 				// Create the record with a randomized value
 				double price = random.nextGaussian() * sd + mean;
-				map.put(record.get("SPECIES"), price);
+				prices.get(key)[index][Size] = dbh;
+				prices.get(key)[index][Price] = price;
 			}
 			
 		} catch (IOException ex) {
@@ -94,13 +93,13 @@ public class TimberMarketplace {
 	 * Set the current pulpwood market price for the given species.
 	 */
 	public void setPulpwoodPrice(WupSpecies species, double price) {
-		pulpwood.put(species.getName(), price);
+		prices.get(species.getName())[Pulpwood][Price] = price;
 	}
 	
 	/**
 	 * Set the current sawlog market price for the given species.
 	 */
 	public void setSawlogPrice(WupSpecies species, double price) {
-		sawlog.put(species.getName(), price);
+		prices.get(species.getName())[Sawlog][Price] = price;
 	}
 }
