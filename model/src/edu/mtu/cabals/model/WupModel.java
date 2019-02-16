@@ -70,7 +70,9 @@ public class WupModel extends ForestSim {
 	protected ParcelAgent createCfAgent(LandUseGeomWrapper lu) {
 		CfAgent agent = new CfAgent(ParcelAgentType.INDUSTRIAL, lu);
 			
-		// TODO Set parameters
+		// Set the number of years to plan for
+		int value = parameters.getCfYears();
+		agent.setYears(value);
 		
 		return agent;
 	}

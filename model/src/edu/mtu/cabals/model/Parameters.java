@@ -14,6 +14,9 @@ public class Parameters extends ParameterBase {
 	private String landfireHeightRaster;
 	private String landfireCoverRaster;
 		
+	// CF years
+	private int cfYears;
+	
 	// NIPF settings
 	private double nipfStandMean, nipfStandSd;
 	private double nipfProftMean, nipfProftSd;
@@ -58,6 +61,10 @@ public class Parameters extends ParameterBase {
 		return nipfProftSd;
 	}
 	
+	public int getCfYears() {
+		return cfYears;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -97,5 +104,9 @@ public class Parameters extends ParameterBase {
 
 	public void setNipfProftSd(double value) {
 		nipfProftSd = value;
+	}
+
+	public void setCfYears(int value) {
+		cfYears = value;
 	}
 }
