@@ -3,6 +3,7 @@ package edu.mtu.cabals.model.marketplace;
 import java.awt.Point;
 import java.util.List;
 
+import edu.mtu.cabals.model.TimberMarketplace;
 import edu.mtu.steppables.LandUseGeomWrapper;
 
 public class CfHarvester extends Harvester {
@@ -35,7 +36,11 @@ public class CfHarvester extends Harvester {
 		// Conduct the harvest
 		HarvestReport report = harvest(lu, patch);
 		
-		// TODO Should we deliver the woody biomass?
+		// Do we have to, or want to deliver woody biomass?
+		double market = TimberMarketplace.getInstance().getWoodyBiomassPrice() * report.biomassRecoverable;
+		if (contract || report.biomassCost < market) {
+			Transporter.getInstance().transport(lu.getDoubleAttribute("NEAR_KM"), report.biomassRecoverable);
+		}
 		
 		// Update the annual report
 		update(report);

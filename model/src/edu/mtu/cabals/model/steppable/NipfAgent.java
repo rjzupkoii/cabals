@@ -3,7 +3,6 @@ package edu.mtu.cabals.model.steppable;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.mtu.cabals.WupConstants;
 import edu.mtu.cabals.model.marketplace.HarvestBid;
 import edu.mtu.cabals.model.marketplace.NifpHarvester;
 import edu.mtu.steppables.LandUseGeomWrapper;
@@ -32,12 +31,9 @@ public class NipfAgent extends ParcelAgent{
 		
 		// Solicit a bid for it
 		HarvestBid bid = NifpHarvester.getInstance().requestBid(lu, targetHarvest);
-		
-		// Convert the bid to dollars per acre (ha to ac)
-		bid.bid /= (targetHarvest * WupConstants.HectareToAcres);
-		
+			
 		// Request the harvest if the bid is high enough
-		if (bid.bid > minimumProfit) {
+		if ((bid.bid / targetHarvest) > minimumProfit) {
 			NifpHarvester.getInstance().requestHarvest(lu, bid.patch);
 		}		
 	}

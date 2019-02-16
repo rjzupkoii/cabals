@@ -26,13 +26,14 @@ public class NifpHarvester extends Harvester {
 	 * 
 	 * @param lu The parcel that is being harvested.
 	 * @param patch The points that make up the patch.
+	 * @param biomassCost The cost of woody biomass (dollars per ha).
 	 */
 	public void requestHarvest(LandUseGeomWrapper lu, List<Point> patch) {
 		
 		// Conduct the harvest
 		HarvestReport report = harvest(lu, patch);
 		
-		// TODO Should we deliver the woody biomass?
+		// TODO Determine if woody biomass can be removed
 		
 		// Update the annual report
 		update(report);

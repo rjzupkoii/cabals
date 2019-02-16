@@ -173,8 +173,6 @@ public class WupModel extends ForestSim {
 		handler.setLevel(Level.ALL);
 		Log.addHandler(handler);
 		Log.fine("Logging initlized...");
-		
-		// TODO Auto-generated method stub
 	}
 
 	@Override

@@ -24,6 +24,7 @@ public class TimberMarketplace {
 	private final static int Size = 0;
 	private final static int Price = 1;
 	
+	private double woodyBiomassPrice;
 	private HashMap<String, Double[][]> prices;
 	
 	private TimberMarketplace() { }
@@ -50,7 +51,14 @@ public class TimberMarketplace {
 		if (chart[Pulpwood][Size] < dbh && dbh < chart[Sawlog][Size]) { return chart[Pulpwood][Price]; }
 		return chart[Sawlog][Price];
 	}
-			
+
+	/**
+	 * Get the current price for woody biomass (green ton)
+	 */
+	public double getWoodyBiomassPrice() {
+		return woodyBiomassPrice;
+	}
+
 	/**
 	 * Load the prices file for the timber marketplace.
 	 */
@@ -101,5 +109,12 @@ public class TimberMarketplace {
 	 */
 	public void setSawlogPrice(WupSpecies species, double price) {
 		prices.get(species.getName())[Sawlog][Price] = price;
+	}
+
+	/**
+	 * Set the current price for woody biomass (green ton)
+	 */
+	public void setWoodyBiomassPrice(double woodyBiomassPrice) {
+		this.woodyBiomassPrice = woodyBiomassPrice;
 	}
 }

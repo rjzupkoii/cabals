@@ -14,6 +14,8 @@ import edu.mtu.steppables.LandUseGeomWrapper;
  */
 public abstract class Harvester {
 	
+	private double woodyBiomassRetention;
+	
 	private HarvestReport annualReport = new HarvestReport();
 	
 	/**
@@ -38,9 +40,11 @@ public abstract class Harvester {
 	 * @return The report on the harvest.
 	 */
 	protected HarvestReport harvest(LandUseGeomWrapper lu, List<Point> patch) {
+				
+		// TODO Harvest the trees on the parcel
 		
-		// TODO Method stub
-		
+		// TODO Project the costs of harvesting the woody biomass
+				
 		return new HarvestReport();
 	}
 	
@@ -95,4 +99,8 @@ public abstract class Harvester {
 		annualReport.wetlandImpact += harvest.wetlandImpact;
 		annualReport.woodyBiomass += harvest.woodyBiomass;
 	}
+
+	public double getWoodyBiomassRetention() { return woodyBiomassRetention; }
+
+	public void setWoodyBiomassRetention(double value) { woodyBiomassRetention = value; }
 }
