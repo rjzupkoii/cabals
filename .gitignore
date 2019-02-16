@@ -1,5 +1,6 @@
 # Ignore GIS stuff
 /gis/data/
+/gis/model/
 /gis/working/
 
 # Ignore sensitive files
