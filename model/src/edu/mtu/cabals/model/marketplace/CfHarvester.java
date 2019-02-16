@@ -37,8 +37,8 @@ public class CfHarvester extends Harvester {
 		HarvestReport report = harvest(lu, patch);
 		
 		// Do we have to, or want to deliver woody biomass?
-		double market = TimberMarketplace.getInstance().getWoodyBiomassPrice() * report.biomassRecoverable;
-		if (contract || report.biomassCost < market) {
+		double value = TimberMarketplace.getInstance().getWoodyBiomassPrice() * report.biomassRecoverable;
+		if (contract || value > report.biomassCost * getMarkup()) {
 			Transporter.getInstance().transport(lu.getDoubleAttribute("NEAR_KM"), report.biomassRecoverable);
 		}
 		

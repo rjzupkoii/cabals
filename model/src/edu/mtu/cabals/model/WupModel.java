@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import ec.util.MersenneTwisterFast;
+import edu.mtu.cabals.model.marketplace.CfHarvester;
+import edu.mtu.cabals.model.marketplace.NipfHarvester;
 import edu.mtu.cabals.model.steppable.CfAgent;
 import edu.mtu.cabals.model.steppable.NipfAgent;
 import edu.mtu.cabals.scorecard.WupScorecard;
@@ -92,6 +94,12 @@ public class WupModel extends ForestSim {
 		value = random.nextGaussian() * sd + mean;
 		agent.setMinimumProfit(value);
 		
+		// Set woody biomass target
+		mean = parameters.getNipfWoodyBiomassMean();
+		sd = parameters.getNipfWoodyBiomassSd();
+		value = random.nextGaussian() * sd + mean;
+		agent.setWoodyBiomassBid(value);
+		
 		return agent;
 	}	
 	
@@ -101,7 +109,8 @@ public class WupModel extends ForestSim {
 	 */
 	@Override
 	protected void initializeMarketplace() throws ForestSimException {
-		Log.fine("initializeMarketplace");
+		CfHarvester.getInstance().setMarkup(parameters.getCfMarkup());
+		NipfHarvester.getInstance().setMarkup(parameters.getNipfMarkup());
 	}
 
 	@Override

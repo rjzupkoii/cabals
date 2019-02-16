@@ -14,13 +14,16 @@ public class Parameters extends ParameterBase {
 	private String landfireHeightRaster;
 	private String landfireCoverRaster;
 		
-	// CF years
+	// CF settings
+	private double cfMarkup;
 	private int cfYears;
 	
 	// NIPF settings
-	private double nipfStandMean, nipfStandSd;
+	private double nipfMarkup;
 	private double nipfProftMean, nipfProftSd;
-	
+	private double nipfStandMean, nipfStandSd;
+	private double nipfWoodyBiomassMean, nipfWoodyBiomassSd;
+		
 	public String getParcelShapeFile() {
 		return parcelShapeFile;
 	}
@@ -65,6 +68,22 @@ public class Parameters extends ParameterBase {
 		return cfYears;
 	}
 	
+	public double getCfMarkup() {
+		return cfMarkup;
+	}
+
+	public double getNipfMarkup() {
+		return nipfMarkup;
+	}
+	
+	public double getNipfWoodyBiomassMean() {
+		return nipfWoodyBiomassMean;
+	}
+
+	public double getNipfWoodyBiomassSd() {
+		return nipfWoodyBiomassSd;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -97,7 +116,6 @@ public class Parameters extends ParameterBase {
 		nipfStandSd = value;
 	}
 
-	
 	public void setNipfProftMean(double value) {
 		nipfProftMean = value;
 	}
@@ -108,5 +126,21 @@ public class Parameters extends ParameterBase {
 
 	public void setCfYears(int value) {
 		cfYears = value;
+	}
+
+	public void setCfMarkup(double value) {
+		cfMarkup = value;
+	}
+
+	public void setNipfMarkup(double value) {
+		nipfMarkup = value;
+	}
+
+	public void setNipfWoodyBiomassMean(double value) {
+		nipfWoodyBiomassMean = value;
+	}
+
+	public void setNipfWoodyBiomassSd(double value) {
+		nipfWoodyBiomassSd = value;
 	}
 }

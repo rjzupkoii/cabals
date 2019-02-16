@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import edu.mtu.cabals.model.marketplace.CfHarvester;
 import edu.mtu.cabals.model.marketplace.HarvestReport;
-import edu.mtu.cabals.model.marketplace.NifpHarvester;
+import edu.mtu.cabals.model.marketplace.NipfHarvester;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.utilities.BufferedCsvWriter;
@@ -43,9 +43,9 @@ public class WupScorecard implements Scorecard {
 	}
 	
 	private void collectHarvestReports() throws IOException {
-		HarvestReport report = NifpHarvester.getInstance().report();
+		HarvestReport report = NipfHarvester.getInstance().report();
 		writeHarvestReport(report, Indicators.NipfHarvesting.index());
-		NifpHarvester.getInstance().reset();
+		NipfHarvester.getInstance().reset();
 		
 		report = CfHarvester.getInstance().report();
 		writeHarvestReport(report, Indicators.CfHarvesting.index());

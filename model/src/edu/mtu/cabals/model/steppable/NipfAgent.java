@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.mtu.cabals.model.marketplace.HarvestBid;
-import edu.mtu.cabals.model.marketplace.NifpHarvester;
+import edu.mtu.cabals.model.marketplace.NipfHarvester;
 import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
@@ -12,8 +12,10 @@ import edu.mtu.steppables.ParcelAgentType;
 @SuppressWarnings("serial")
 public class NipfAgent extends ParcelAgent{
 
-	private double targetHarvest;
 	private double minimumProfit;
+	private double targetHarvest;
+	private double woodyBiomassBid;
+	
 	private List<LandUseGeomWrapper> parcels;
 	
 	public NipfAgent(ParcelAgentType type, LandUseGeomWrapper lu) {
@@ -30,11 +32,11 @@ public class NipfAgent extends ParcelAgent{
 		LandUseGeomWrapper lu = parcels.get(ndx);
 		
 		// Solicit a bid for it
-		HarvestBid bid = NifpHarvester.getInstance().requestBid(lu, targetHarvest);
+		HarvestBid bid = NipfHarvester.getInstance().requestBid(lu, targetHarvest);
 			
 		// Request the harvest if the bid is high enough
 		if ((bid.bid / targetHarvest) > minimumProfit) {
-			NifpHarvester.getInstance().requestHarvest(lu, bid.patch);
+			NipfHarvester.getInstance().requestHarvest(lu, bid.patch, woodyBiomassBid);
 		}		
 	}
 
@@ -48,5 +50,7 @@ public class NipfAgent extends ParcelAgent{
 	
 	public void setMinimumProfit(double value) { minimumProfit = value; }
 	
-	public void setTargetHarvest(double value) { targetHarvest = value; }	
+	public void setTargetHarvest(double value) { targetHarvest = value; }
+
+	public void setWoodyBiomassBid(double value) { woodyBiomassBid = value; }	
 }

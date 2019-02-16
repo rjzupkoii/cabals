@@ -14,8 +14,8 @@ import edu.mtu.steppables.LandUseGeomWrapper;
  */
 public abstract class Harvester {
 	
+	private double markup;
 	private double woodyBiomassRetention;
-	
 	private HarvestReport annualReport = new HarvestReport();
 	
 	/**
@@ -100,7 +100,11 @@ public abstract class Harvester {
 		annualReport.woodyBiomass += harvest.woodyBiomass;
 	}
 
+	public double getMarkup() { return markup; }
+	
 	public double getWoodyBiomassRetention() { return woodyBiomassRetention; }
 
+	public void setMarkup(double value) { markup = value; }
+	
 	public void setWoodyBiomassRetention(double value) { woodyBiomassRetention = value; }
 }
