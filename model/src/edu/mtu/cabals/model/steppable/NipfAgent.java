@@ -33,8 +33,8 @@ public class NipfAgent extends ParcelAgent{
 		// Solicit a bid for it
 		HarvestBid bid = NifpHarvester.getInstance().requestBid(lu, targetHarvest);
 		
-		// Convert the bid to dollars per acre (sq.m to ac)
-		bid.bid /= WupConstants.SquareMetersToAcres;
+		// Convert the bid to dollars per acre (ha to ac)
+		bid.bid /= (targetHarvest * WupConstants.HectareToAcres);
 		
 		// Request the harvest if the bid is high enough
 		if (bid.bid > minimumProfit) {

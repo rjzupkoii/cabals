@@ -76,9 +76,19 @@ public class WupModel extends ForestSim {
 	}
 
 	protected ParcelAgent createNifpAgent(LandUseGeomWrapper lu) {
-		ParcelAgent agent = new NipfAgent(ParcelAgentType.OTHER, lu);
+		NipfAgent agent = new NipfAgent(ParcelAgentType.OTHER, lu);
 		
-		// TODO Set parameters
+		// Set patch size
+		double mean = parameters.getNipfStandMean();
+		double sd = parameters.getNipfStandSd();
+		double value = random.nextGaussian() * sd + mean;
+		agent.setTargetHarvest(value);
+		
+		// Set target profit
+		mean = parameters.getNipfProftMean();
+		sd = parameters.getNipfProftSd();
+		value = random.nextGaussian() * sd + mean;
+		agent.setMinimumProfit(value);
 		
 		return agent;
 	}	

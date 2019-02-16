@@ -29,7 +29,7 @@ public class NifpHarvester extends Harvester {
 	 * Request a bit from the harvester for the given parcel and patch size.
 	 * 
 	 * @param lu The parcel to request the bid on.
-	 * @param patch The size (sq.m) of the patch to be harvested.
+	 * @param patch The size (ha) of the patch to be harvested.
 	 * @return The bid and the patch being bid on.
 	 */
 	public HarvestBid requestBid(LandUseGeomWrapper lu, double patch) {

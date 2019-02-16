@@ -16,7 +16,7 @@ public abstract class Harvester {
 	 * Find the most mature patch in the given parcel that matches the size.
 	 * 
 	 * @param lu The parcel to examine.
-	 * @param patch The size (sq.m) of the patch to be harvested.
+	 * @param patch The size (ha) of the patch to be harvested.
 	 * @return The points in the patch, or null if a match cannot be found.
 	 */
 	public List<Point> findPatch(LandUseGeomWrapper lu, double patch) {

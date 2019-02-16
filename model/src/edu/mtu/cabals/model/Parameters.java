@@ -5,8 +5,6 @@ import edu.mtu.simulation.parameters.ParameterBase;
 public class Parameters extends ParameterBase {
 
 	// Model settings
-	private double nipfStandMean;
-	private double nipfStandSd;
 	private String outputDirectory;
 	private String pricesFile;
 	
@@ -16,6 +14,10 @@ public class Parameters extends ParameterBase {
 	private String landfireHeightRaster;
 	private String landfireCoverRaster;
 		
+	// NIPF settings
+	private double nipfStandMean, nipfStandSd;
+	private double nipfProftMean, nipfProftSd;
+	
 	public String getParcelShapeFile() {
 		return parcelShapeFile;
 	}
@@ -48,6 +50,14 @@ public class Parameters extends ParameterBase {
 		return nipfStandSd;
 	}
 	
+	public double getNipfProftMean() {
+		return nipfProftMean;
+	}
+	
+	public double getNipfProftSd() {
+		return nipfProftSd;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -78,5 +88,14 @@ public class Parameters extends ParameterBase {
 
 	public void setNipfStandSd(double value) {
 		nipfStandSd = value;
+	}
+
+	
+	public void setNipfProftMean(double value) {
+		nipfProftMean = value;
+	}
+
+	public void setNipfProftSd(double value) {
+		nipfProftSd = value;
 	}
 }
