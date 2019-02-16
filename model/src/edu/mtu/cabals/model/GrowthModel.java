@@ -23,6 +23,7 @@ import edu.mtu.environment.Forest;
 import edu.mtu.environment.NlcdClassification;
 import edu.mtu.environment.Species;
 import edu.mtu.environment.Stand;
+import edu.mtu.environment.StockingCondition;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.grid.DoubleGrid2D;
@@ -156,9 +157,27 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 	}
 
 	@Override
-	public Stand growStand(Stand arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Stand growStand(Stand stand) {
+		
+		// Get species reference
+		WupSpecies species = (WupSpecies)stand.dominateSpecies;
+		
+		// Get the growth, assume that it is a normal distribution
+		double growth = random.nextGaussian() + species.getDbhGrowth();
+		growth = (growth > 0) ? growth : 0;
+		
+		// Apply the growth
+		stand.arithmeticMeanDiameter += growth;
+		stand.arithmeticMeanDiameter = (stand.arithmeticMeanDiameter > species.getMaximumDbh()) ? species.getMaximumDbh() : stand.arithmeticMeanDiameter;
+		stand.age++;
+		
+		// Randomly thin the stand if need be
+		if (stand.stocking == StockingCondition.Overstocked.getValue()) {
+			double thinning = random.nextInt(10) / 100.0;
+			stand.numberOfTrees -= stand.numberOfTrees * thinning;
+		}
+		
+		return stand;		
 	}
 
 	/**
