@@ -86,7 +86,7 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 			System.err.println(ex);
 			System.exit(-1);
 		}
-				
+
 		// Calculate the initial stand based upon NLCD and LANDFIRE data
 		DoubleGrid2D dbhGrid = new DoubleGrid2D(width, height);
 		IntGrid2D ageGrid = new IntGrid2D(width, height);
@@ -115,14 +115,17 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				double treeHeight = min + (max - min) * random.nextDouble();
 				double dbh = reference.heightToDbh(treeHeight);
 				
-				// TODO cover to count
-				int treeCover = random.nextInt((evc.getMax() - evc.getMin()) + 1) + evc.getMin();
-				int count = treeCover;
+				// Use the DBH and cover min/max bounds to approximate the number of trees, note we assume the pixel is 30x30 meters
+				min = Math.floor((900 * evc.getMin()) / (Math.PI * Math.pow(dbh / 10, 2)));
+				max = Math.ceil((900 * evc.getMax()) / (Math.PI * Math.pow(dbh / 10, 2)));
+				int count = random.nextInt((int)(max - min) + 1) + (int)min;
 				
 				// Set the values on the grids
 				dbhGrid.set(ndx, ndy, dbh);
 				countGrid.set(ndx, ndy, count);
 				ageGrid.set(ndx, ndy, (int)(dbh / reference.getDbhGrowth()));
+				
+				Log.fine("DBH: " + dbh + ", Count: " + count);
 			}
 		}
 		
@@ -184,6 +187,8 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 	 * Import the given raster file.
 	 */
 	private IntGrid2D importRaster(String fileName) throws FileNotFoundException {
+		Log.fine("Importing: " + fileName);
+		
 		InputStream inputStream = new FileInputStream(fileName);
 		GeomGridField raster = new GeomGridField();
 		ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, raster);

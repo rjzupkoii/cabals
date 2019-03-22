@@ -1,19 +1,20 @@
 package edu.mtu.cabals.model;
 
 public enum LandfireEvc {
-	CoverTenToTwenty(101, 10, 20),
-	CoverTwentyToThirty(102, 20, 30),
-	CoverThirtyToFourty(103, 30, 40),
-	CoverFourtyToFifty(104, 40, 50),
-	CoverFiftyToSixty(105, 50, 60),
-	CoverSixtyToSeventy(106, 60, 70),
-	CoverSeventyToEighty(107, 70, 80),
-	CoverEightyToNinety(108, 80, 90),
-	CoverNinetyToHundered(109, 90, 100);
+	CoverTenToTwenty(101, 0.1, 0.2),
+	CoverTwentyToThirty(102, 0.2, 0.3),
+	CoverThirtyToFourty(103, 0.3, 0.4),
+	CoverFourtyToFifty(104, 0.4, 0.5),
+	CoverFiftyToSixty(105, 0.5, 0.6),
+	CoverSixtyToSeventy(106, 0.6, 0.7),
+	CoverSeventyToEighty(107, 0.7, 0.8),
+	CoverEightyToNinety(108, 0.8, 0.9),
+	CoverNinetyToHundered(109, 0.9, 1.0);
 	
-	private int code, min, max;
+	private int code;
+	private double min, max;
 	
-	private LandfireEvc(int code, int min, int max) {
+	private LandfireEvc(int code, double min, double max) {
 		this.code = code;
 		this.min = min;
 		this.max = max;
@@ -31,7 +32,7 @@ public enum LandfireEvc {
 		return null;
 	}
 	
-	public int getMin() { return min; }
+	public double getMin() { return min; }
 	
-	public int getMax() { return max; }
+	public double getMax() { return max; }
 }
