@@ -7,13 +7,14 @@ public class BetulaAlleghaniensis implements WupSpecies {
 	public final static double MaxDbh = 56.7d;			// cm
 	public final static double MaxHeight = 34.7d;		// m 
 	
-	// 
+	// Jenkins et al., 2003
 	@Override
 	public double getAboveGroundBiomass(double dbh) {
 		double beta0 = -2.5356, beta1 = 2.4349;
 		return Math.exp(beta0 + beta1 * Math.log(dbh));
 	}
 	
+	// Jenkins et al., 2003
 	@Override
 	public double getStemWoodBiomassRatio(double dbh) {
 		double beta0 = -0.3065, beta1 = -5.4240;
@@ -32,7 +33,9 @@ public class BetulaAlleghaniensis implements WupSpecies {
 	
 	@Override
 	public double heightToDbh(double height) {
-		// TODO Auto-generated method stub
+		
+		// TODO Yellow Birch, height to DBH
+		
 		return 0;
 	}
 	
@@ -41,13 +44,17 @@ public class BetulaAlleghaniensis implements WupSpecies {
 
 	@Override
 	public double getDbhGrowth() {
-		// TODO Auto-generated method stub
+		
+		// TODO Yellow Birch, DBH growth
+		
 		return 0;
 	}
 
 	@Override
 	public double getMaximumDbh() {
-		// TODO Auto-generated method stub
+		
+		// TODO Yellow Birch, max DBH
+		
 		return 0;
 	}
 
@@ -56,7 +63,9 @@ public class BetulaAlleghaniensis implements WupSpecies {
 
 	@Override
 	public String getDataFile() {
-		// TODO Auto-generated method stub
+		
+		// TODO Yellow Birch, stocking file
+		
 		return null;
 	}
 }
