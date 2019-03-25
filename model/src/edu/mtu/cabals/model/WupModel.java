@@ -1,6 +1,11 @@
 package edu.mtu.cabals.model;
 
+import java.awt.Point;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,17 +16,20 @@ import edu.mtu.cabals.model.marketplace.CfHarvester;
 import edu.mtu.cabals.model.marketplace.NipfHarvester;
 import edu.mtu.cabals.model.steppable.CfAgent;
 import edu.mtu.cabals.model.steppable.NipfAgent;
+import edu.mtu.cabals.model.steppable.WupAgent;
 import edu.mtu.cabals.scorecard.WupScorecard;
 import edu.mtu.policy.PolicyBase;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.ForestSimException;
 import edu.mtu.simulation.Scorecard;
+import edu.mtu.simulation.parameters.ParameterBase;
 import edu.mtu.simulation.parameters.ParseParameters;
 import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
 import edu.mtu.utilities.GisUtility;
 import sim.field.grid.IntGrid2D;
+import sim.util.Bag;
 import sim.util.IntBag;
 import sim.util.geo.AttributeValue;
 
@@ -36,8 +44,13 @@ public class WupModel extends ForestSim {
 	private static IntGrid2D visualBuffer;
 	private static IntGrid2D wetlands;
 	
+	private Map<Integer, ParcelAgent> owners;
+	
 	public WupModel(long seed) {
 		super(seed);
+		
+		// Prepare the mapping
+		owners = new HashMap<Integer, ParcelAgent>();
 		
 		// Load the reference GIS files
 		try {
@@ -49,7 +62,57 @@ public class WupModel extends ForestSim {
 			System.exit(-1);
 		}
 	}
-
+	
+	/**
+	 * Hard override of the ForestSim createParcelAgents method since agents can 
+	 * have multiple parcels under their control.
+	 */
+	@Override
+	protected void createParcelAgents() throws ForestSimException {
+		int discarded = 0;
+		
+		Bag geometries = getParcelLayer().getGeometries();
+		List<ParcelAgent> working = new ArrayList<ParcelAgent>();
+		for (int ndx = 0; ndx < geometries.numObjs; ndx++) {
+			// Create the geometry for the agent and index it
+			LandUseGeomWrapper geometry = (LandUseGeomWrapper)geometries.objs[ndx];
+			geometry.setIndex(ndx);
+			
+			// Create the agent
+			ParcelAgent agent = createAgent(geometry, ((ParameterBase)getModelParameters()).getEconomicAgentPercentage());
+			if (agent == null) {
+				discarded++;
+				geometries.remove(ndx);
+				ndx--;
+				continue;
+			}
+			
+			// Update the global geometry with the agents updates
+			geometries.objs[ndx] = agent.getGeometry();
+			
+			// Schedule the agent
+			working.add(agent);
+		}
+		
+		// Reconcile the working list of agents with the actual list
+		ParcelAgent[] agents = new ParcelAgent[geometries.numObjs];
+		for (int ndx = 0; ndx < working.size(); ndx++) {
+			agents[ndx] = working.get(ndx);
+		}
+		setParcelAgents(agents);
+		
+		// Schedule all of the unique agents
+		for (int key : owners.keySet()) {
+			schedule.scheduleRepeating(owners.get(key));
+		}
+		
+		// If we discarded anything, let the user know
+		if (discarded != 0) {
+			String message = "WARNING: discarded " + discarded + " parcels due to invalid geometry.";
+			System.err.println(message);
+		}
+	}
+	
 	/**
 	 * Hard override of the ForestSim createAgent method since we care about
 	 * what the underlying parcel is.
@@ -64,24 +127,37 @@ public class WupModel extends ForestSim {
 		if (xPos.size() == 0) {
 			return null;
 		}
-		
-		// Create the correct agent type for the parcel
-		ParcelAgent agent = null;
-		AttributeValue value = lu.getAttributes().get("type");
-		switch (value.getString()) {
-		case "CF": agent = createCfAgent(lu);
-			break;
-		case "NIPF":
-		case "FF": agent = createNifpAgent(lu);
-			break;
-		default:
-			System.err.println("Unknown parcel type: " + value.getString());
-			System.exit(-1);
+				
+		// Check to see if we have seen this owner before
+		int id = lu.getIntegerAttribute("owner_id");
+		if (!owners.containsKey(id)) {
+			// Create the correct agent type for the parcel
+			ParcelAgent agent = null;
+			AttributeValue value = lu.getAttributes().get("type");
+			switch (value.getString()) {
+			case "CF": agent = createCfAgent(lu);
+				break;
+			case "NIPF":
+			case "FF": agent = createNifpAgent(lu);
+				break;
+			default:
+				System.err.println("Unknown parcel type: " + value.getString());
+				System.exit(-1);
+			}
+			owners.put(id, agent);
 		}
+				
+		// Get the agent
+		WupAgent agent = (WupAgent)owners.get(id);
 		
-		// Update the agent geometry
-		agent.createCoverPoints(xPos, yPos);
-		agent.getGeometry().updateShpaefile();
+		// Note the points and add the parcel
+		Point[] points = new Point[xPos.size()];
+		for(int i=0; i < xPos.size(); i++) {
+			points[i] = new Point(xPos.get(i), yPos.get(i));
+		}
+		agent.addParcel(lu, points);
+
+		// Return the agent
 		return agent;
 	}
 		

@@ -1,26 +1,18 @@
 package edu.mtu.cabals.model.steppable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.mtu.cabals.model.marketplace.CfHarvester;
 import edu.mtu.cabals.model.marketplace.HarvestBid;
 import edu.mtu.steppables.LandUseGeomWrapper;
-import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
 
 @SuppressWarnings("serial")
-public class CfAgent extends ParcelAgent {
+public class CfAgent extends WupAgent {
 
 	private double targetPatch;
 	private int years;
-	private List<LandUseGeomWrapper> parcels;
 	
 	public CfAgent(ParcelAgentType type, LandUseGeomWrapper lu) {
 		super(type, lu);
-
-		parcels = new ArrayList<LandUseGeomWrapper>();
-		parcels.add(lu);
 	}
 
 	@Override
@@ -34,7 +26,7 @@ public class CfAgent extends ParcelAgent {
 		CfHarvester harvester = CfHarvester.getInstance();
 						
 		// Find the highest value patch based on stumpage
-		for (LandUseGeomWrapper lu : parcels) {
+		for (LandUseGeomWrapper lu : parcels.keySet()) {
 			
 			double patch = (lu.getDoubleAttribute("AREA_HA") < targetPatch) ? lu.getDoubleAttribute("AREA_HA") : targetPatch;
 			HarvestBid bid = harvester.requestBid(lu, patch);
@@ -73,7 +65,7 @@ public class CfAgent extends ParcelAgent {
 		
 		// Find size of all of our parcels
 		double sum = 0;
-		for (LandUseGeomWrapper lu : parcels) {
+		for (LandUseGeomWrapper lu : parcels.keySet()) {
 			sum += lu.getDoubleAttribute("AREA_HA");
 		}
 		
