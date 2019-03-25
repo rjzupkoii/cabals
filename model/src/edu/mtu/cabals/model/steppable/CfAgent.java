@@ -29,7 +29,7 @@ public class CfAgent extends WupAgent {
 		for (LandUseGeomWrapper lu : parcels.keySet()) {
 			
 			double patch = (lu.getDoubleAttribute("AREA_HA") < targetPatch) ? lu.getDoubleAttribute("AREA_HA") : targetPatch;
-			HarvestBid bid = harvester.requestBid(lu, patch);
+			HarvestBid bid = harvester.requestBid(parcels.get(lu), patch);
 
 			// Is this bid irrelevant?
 			if (bid.bid == 0 || (bestBid != null && bid.bid < bestBid.bid)) {

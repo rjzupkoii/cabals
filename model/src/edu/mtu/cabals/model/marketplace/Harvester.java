@@ -1,6 +1,8 @@
 package edu.mtu.cabals.model.marketplace;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.javatuples.Pair;
@@ -22,18 +24,120 @@ public abstract class Harvester {
 	private double woodyBiomassRetention;
 	private HarvestReport annualReport = new HarvestReport();
 	
+	private class Cell {
+		public ArrayList<Point> points = new ArrayList<Point>();
+	}
+	
 	/**
 	 * Find the most mature patch in the given parcel that matches the size.
 	 * 
-	 * @param lu The parcel to examine.
+	 * @param parcel The parcel to examine.
 	 * @param patch The size (ha) of the patch to be harvested.
 	 * @return The points in the patch, or null if a match cannot be found.
 	 */
-	public List<Point> findPatch(LandUseGeomWrapper lu, double patch) {
+	public List<Point> findPatch(final Point[] parcel, double patch) {
+				
+		// If the patch is greater than or equal to the size of the parcel, just return it
+		double width = Math.sqrt(Forest.getInstance().getPixelArea());		// Assume square pixels
+		double area = (parcel.length * Math.pow(width, 2)) / 10000;
+		if (area <= patch) {
+			return Arrays.asList(parcel);
+		}
 		
-		// TODO Auto-generated method stub
+		// Start by finding our bounds
+		int xMin = Integer.MAX_VALUE, yMin = Integer.MAX_VALUE, xMax = Integer.MIN_VALUE, yMax = Integer.MIN_VALUE;
+		for (Point point : parcel) {
+			xMin = (xMin < point.x) ? xMin : point.x;
+			yMin = (yMin < point.y) ? yMin : point.y;
+			xMax = (xMax > point.x) ? xMax : point.x;
+			yMax = (yMax > point.y) ? yMax : point.y;
+		}
 		
-		return null;
+		// Use the bounds to setup our grids
+		int divisor = (int)Math.floor(10000 / width);						// 1 ha / pixel size in m
+		int xBound = (int)Math.ceil((xMax - xMin) / divisor);
+		int yBound = (int)Math.ceil((yMax - yMin) / divisor);
+		Cell[][] patches = new Cell[xBound][yBound];
+		double[][] meanDbh = new double[xBound][yBound];
+		
+		// Iterate through the points, sum the DBH and assign points to patches
+		Forest forest = Forest.getInstance();
+		for (Point point : parcel) {
+			int x = point.x % divisor;
+			int y = point.y % divisor;
+			patches[x][y].points.add(point);
+			
+			Stand stand = forest.getStand(point);
+			meanDbh[x][y] += stand.arithmeticMeanDiameter;
+		}
+		
+		// Find the mean DBH and note the max
+		int x = 0, y = 0;
+		double max = Double.MIN_VALUE;
+		for (int ndx = 0; ndx < meanDbh.length; ndx++) {
+			for (int ndy = 0; ndy < meanDbh[ndx].length; ndy++) {
+				meanDbh[ndx][ndy] /= patches[ndx][ndy].points.size();
+				if (meanDbh[ndx][ndy] > max) {
+					max = meanDbh[ndx][ndy];
+					x = ndx;
+					y = ndy;
+				}
+			}
+		}
+		
+		return findBest(patches, meanDbh, x, y, patch);
+	}
+	
+	/**
+	 * Use a basic greedy algorithm to find the highest value patch from the current location. 
+	 */
+	private List<Point> findBest(Cell[][] patches, double[][] meanDbh, int ndx, int ndy, double target) {
+		
+		// Note the pixel area and prepare
+		double area = Forest.getInstance().getPixelArea();
+		List<Point> points = new ArrayList<Point>();
+		double harvest = 0;
+		
+		while (harvest < target) {
+			// Copy the points over and update the harvest
+			harvest += (patches[ndx][ndy].points.size() * area) / 10000;			// Harvest in ha 
+			points.addAll(patches[ndx][ndy].points);
+			meanDbh[ndx][ndy] = 0;
+			
+			// Find the next harvest patch
+			int x = 0, y = 0;
+			double max = Double.MIN_VALUE;
+			
+			if (ndy != 0 && meanDbh[ndx][ndy - 1] > max) {
+				max = meanDbh[ndx][ndy - 1];
+				x = ndx; y = ndy - 1;
+			}
+			
+			if (ndx != 0 && meanDbh[ndx - 1][ndy] > max) {
+				max = meanDbh[ndx - 1][ndy];
+				x = ndx - 1; y = ndy;
+			}
+			
+			if ((ndx + 1) != meanDbh.length && meanDbh[ndx + 1][ndy] > max) {
+				max = meanDbh[ndx + 1][ndy];
+				x = ndx + 1; y = ndy;
+			}
+			
+			if ((ndy + 1) != meanDbh[ndx].length && meanDbh[ndx][ndy + 1] > max) {
+				max = meanDbh[ndx][ndy + 1];
+				x = ndx; y = ndy + 1;
+			}
+			
+			// Move
+			ndx = x; ndy = y;
+			
+			// Exit if we didn't move
+			if (max == Double.MIN_VALUE) {
+				break;
+			}
+		}
+		
+		return points;
 	}
 	
 	/**
@@ -110,13 +214,13 @@ public abstract class Harvester {
 	/**
 	 * Request a bit from the harvester for the given parcel and patch size.
 	 * 
-	 * @param lu The parcel to request the bid on.
+	 * @param parcel The parcel to request the bid on.
 	 * @param patch The size (ha) of the patch to be harvested.
 	 * @return The bid and the patch being bid on.
 	 */
-	public HarvestBid requestBid(LandUseGeomWrapper lu, double patch) {
+	public HarvestBid requestBid(Point[] parcel, double patch) {
 		// Find a patch with the given size
-		List<Point> points = findPatch(lu, patch);
+		List<Point> points = findPatch(parcel, patch);
 		if (points == null) {
 			return null;
 		}
