@@ -13,6 +13,8 @@ public class Parameters extends ParameterBase {
 	private String nlcdRaster;
 	private String landfireHeightRaster;
 	private String landfireCoverRaster;
+	private String visualBufferRaster;
+	private String wetlandsRaster;
 		
 	// CF settings
 	private double cfMarkup;
@@ -84,6 +86,14 @@ public class Parameters extends ParameterBase {
 		return nipfWoodyBiomassSd;
 	}
 	
+	public String getVisualBufferRaster() {
+		return visualBufferRaster;
+	}
+
+	public String getWetlandsRaster() {
+		return wetlandsRaster;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -143,4 +153,13 @@ public class Parameters extends ParameterBase {
 	public void setNipfWoodyBiomassSd(double value) {
 		nipfWoodyBiomassSd = value;
 	}
+	
+	public void setVisualBufferRaster(String value) {
+		visualBufferRaster = value;
+	}
+
+	public void setWetlandsRaster(String value) {
+		wetlandsRaster = value;
+	}
+
 }

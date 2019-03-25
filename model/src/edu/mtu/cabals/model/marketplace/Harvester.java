@@ -3,11 +3,15 @@ package edu.mtu.cabals.model.marketplace;
 import java.awt.Point;
 import java.util.List;
 
+import org.javatuples.Pair;
+
 import edu.mtu.cabals.model.TimberMarketplace;
+import edu.mtu.cabals.model.WupModel;
 import edu.mtu.cabals.wup.WupSpecies;
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.Stand;
 import edu.mtu.steppables.LandUseGeomWrapper;
+import sim.field.grid.IntGrid2D;
 
 /**
  * Harvesters (e.g., CF and NIPF) both share the same way of harvesting.
@@ -27,7 +31,7 @@ public abstract class Harvester {
 	 */
 	public List<Point> findPatch(LandUseGeomWrapper lu, double patch) {
 		
-		// TODO Method stub
+		// TODO Auto-generated method stub
 		
 		return null;
 	}
@@ -40,12 +44,62 @@ public abstract class Harvester {
 	 * @return The report on the harvest.
 	 */
 	protected HarvestReport harvest(LandUseGeomWrapper lu, List<Point> patch) {
-				
-		// TODO Harvest the trees on the parcel
+
+		// Get the reference GIS files
+		IntGrid2D visualBuffer = WupModel.getVisualBuffer();
+		IntGrid2D wetlands = WupModel.getWetlands();
 		
-		// TODO Project the costs of harvesting the woody biomass
+		// Perform the initial harvest of the patch
+		Forest forest = Forest.getInstance();
+		Pair<Double, Double> results = forest.harvest(patch.toArray(new Point[0]));
+		
+		// Update the report with the results of the harvest
+		HarvestReport report = new HarvestReport();
+		double area = forest.getPixelArea();
+		report.merchantable = results.getValue0() / 1000;							// Stem / 1000 for metric tons
+		report.woodyBiomass = (results.getValue1() - results.getValue0()) / 1000;	// (Aboveground - Stem) / 1000 for metric tons
+		report.harvestedArea = (patch.size() * area) / 10000;		// sq.m to ha
+		
+		// Check to see what the impacts are via GIS
+		for (Point point : patch) {
+			if (visualBuffer.get(point.x, point.y) != 0) {
+				report.visualImpact += area;
+			}
+			if (wetlands.get(point.x, point.y) != 0) {
+				report.wetlandImpact += area;
+			}
+		}
+		report.visualImpact /= 10000;	// sq.m to ha
+		report.wetlandImpact /= 10000;	// sq.m to ha
 				
-		return new HarvestReport();
+		// Apply the economic calculations
+		report.labor = harvestDuration(report.merchantable);
+		report.biomassRecoverable = report.woodyBiomass * (1 - woodyBiomassRetention);
+		report.biomassLabor = biomassLabor(report.biomassRecoverable);
+		report.biomassCost = biomassCost(report.biomassLabor, lu.getDoubleAttribute("NEAR_KM"));
+		
+		return report;
+	}
+	
+	private double harvestDuration(double merchantable) {
+		
+		// TODO Calculate the harvest duration based upon merchantable biomass
+		
+		return 0.0;
+	}
+	
+	private double biomassLabor(double biomass) {
+		
+		// TODO Calculate the woody biomass labor based upon recoverable biomass
+		
+		return 0.0;
+	}
+	
+	private double biomassCost(double labor, double distance) {
+		
+		// TODO Calculate the woody biomass cost based upon labor and distance to travel
+		
+		return 0.0;
 	}
 	
 	/**

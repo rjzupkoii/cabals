@@ -1,5 +1,6 @@
 package edu.mtu.cabals.model;
 
+import java.io.FileNotFoundException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +20,8 @@ import edu.mtu.simulation.parameters.ParseParameters;
 import edu.mtu.steppables.LandUseGeomWrapper;
 import edu.mtu.steppables.ParcelAgent;
 import edu.mtu.steppables.ParcelAgentType;
+import edu.mtu.utilities.GisUtility;
+import sim.field.grid.IntGrid2D;
 import sim.util.IntBag;
 import sim.util.geo.AttributeValue;
 
@@ -30,8 +33,21 @@ public class WupModel extends ForestSim {
 	private static Parameters parameters = null;
 	private Scorecard scorecard = null;
 	
+	private static IntGrid2D visualBuffer;
+	private static IntGrid2D wetlands;
+	
 	public WupModel(long seed) {
 		super(seed);
+		
+		// Load the reference GIS files
+		try {
+			Parameters parameters = WupModel.getParameters();
+			visualBuffer = GisUtility.importRaster(parameters.getVisualBufferRaster());
+			wetlands = GisUtility.importRaster(parameters.getWetlandsRaster());
+		} catch (FileNotFoundException ex) {
+			System.err.println(ex);
+			System.exit(-1);
+		}
 	}
 
 	/**
@@ -135,13 +151,20 @@ public class WupModel extends ForestSim {
 
 	@Override
 	public int getHarvestCapacity() {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new IllegalAccessError("Aggregate harvester not being used.");
 	}
 
 	@Override
 	public Object getModelParameters() {
 		return getParameters();
+	}
+	
+	public static IntGrid2D getVisualBuffer() {
+		return visualBuffer;
+	}
+	
+	public static IntGrid2D getWetlands() {
+		return wetlands;
 	}
 	
 	public static Parameters getParameters() {

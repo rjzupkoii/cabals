@@ -1,10 +1,8 @@
 package edu.mtu.cabals.model;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,11 +22,10 @@ import edu.mtu.environment.NlcdClassification;
 import edu.mtu.environment.Species;
 import edu.mtu.environment.Stand;
 import edu.mtu.environment.StockingCondition;
+import edu.mtu.utilities.GisUtility;
 import sim.field.geo.GeomGridField;
-import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
-import sim.io.geo.ArcInfoASCGridImporter;
 
 /**
  * Growth model for the agent-based LCSA proof-of-concept. The landscape
@@ -80,8 +77,8 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 		IntGrid2D wupEvc = null, wupEvh = null;
 		try {
 			Parameters parameters = WupModel.getParameters();
-			wupEvc = importRaster(parameters.getLandfireCoverRaster());
-			wupEvh = importRaster(parameters.getLandfireHeightRaster());
+			wupEvc = GisUtility.importRaster(parameters.getLandfireCoverRaster());
+			wupEvh = GisUtility.importRaster(parameters.getLandfireHeightRaster());
 		} catch (FileNotFoundException ex) {
 			System.err.println(ex);
 			System.exit(-1);
@@ -181,18 +178,6 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 		}
 		
 		return stand;		
-	}
-
-	/**
-	 * Import the given raster file.
-	 */
-	private IntGrid2D importRaster(String fileName) throws FileNotFoundException {
-		Log.fine("Importing: " + fileName);
-		
-		InputStream inputStream = new FileInputStream(fileName);
-		GeomGridField raster = new GeomGridField();
-		ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, raster);
-		return (IntGrid2D)raster.getGrid();
 	}
 	
 	/**
