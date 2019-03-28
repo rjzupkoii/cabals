@@ -2,22 +2,21 @@ package edu.mtu.cabals.wup;
 
 import edu.mtu.utilities.Constants;
 
-// https://www.na.fs.fed.us/spfo/pubs/silvics_manual/Volume_1/pinus/strobus.htm
-// http://dnr.wi.gov/topic/ForestManagement/documents/24315/31.pdf
 public class PinusStrobus implements WupSpecies {
 	
-	public final static double MaxHeight = 50d;
+	private final static double GrowthPerYear = 0.5;	// cm/year
+	private final static double MaxDbh = 102.0;			// cm
+	private final static double MaxHeight = 50;			// m 
+	
 	
 	// Jenkins et al., 2003
 	public double getAboveGroundBiomass(double dbh) {
-		//  - https://www.fs.fed.us/ne/durham/4104/papers/Heathbiomass_eqns.pdf
 		double beta0 = -2.5356, beta1 = 2.4349;
 		return Math.exp(beta0 + beta1 * Math.log(dbh));
 	}
 	
 	// Jenkins et al., 2003
 	public double getStemWoodBiomassRatio(double dbh) {
-		//  - https://www.fs.fed.us/ne/durham/4104/papers/Heathbiomass_eqns.pdf
 		double beta0 = -0.3737, beta1 = -1.8055;
 		return Math.exp(beta0 + (beta1 / dbh));
 	}
@@ -31,39 +30,32 @@ public class PinusStrobus implements WupSpecies {
 		double ht = 4.5 + P2 * Math.exp(-P3 * Math.pow(dbh, P4));
 		return (ht / 3.281);		// ht in ft to m
 	}
-	
-	/**
-	 * Get the DBH (cm) of the tree given the height (m); (Kershaw et al. 2008)
-	 * 
-	 * @return The DBH (cm) or -1 if the height is out of bounds ([2, 50])
-	 */
+
+	// Kershaw et al. 2008
 	@Override
 	public double heightToDbh(double height) {
 		double b1 = 49.071, b2 = 0.016;
 		
-		// Check that we can do the math
 		if (height < 2 || height > MaxHeight) { return -1; }
 		
-		double dbh = -Math.log(Math.pow(1 - ((height - Constants.DbhTakenAt) / b1), 1 / b2));
+		double dbh = -Math.log(1 - (height - Constants.DbhTakenAt) / b1) / b2;
 		return dbh;
 	}
 
-	public String getName() {
-		return "WHITE PINE";
-	}
-
-	public double getDbhGrowth() {
-		return 0.5;
-	}
-
-	public double getMaximumDbh() {
-		return 102.0;
-	}
-
-	public String getDataFile() {
-		return "data/PinusStrobus.csv";
-	}
+	// Silvics Manual, vol. 2, average estimates
+	@Override
+	public double getDbhGrowth() { return GrowthPerYear; }
 	
+	// Silvics Manual, vol. 2, common high-end value
+	@Override
+	public double getMaximumDbh() { return MaxDbh; }
+
 	@Override
 	public double getMaximumHeight() { return MaxHeight; }
+
+	@Override
+	public String getName() { return "White Pine"; }
+	
+	@Override
+	public String getDataFile() { return "data/PinusStrobus.csv"; }
 }

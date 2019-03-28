@@ -23,6 +23,20 @@ public class SpeciesTests {
 	}
 	
 	/**
+	 * Verify height to dbh is correct for Betula Alleghaniesis
+	 */
+	@Test
+	public void BetulaAlleghaniensisDbh() {
+		BetulaAlleghaniensis species = new BetulaAlleghaniensis();
+		Assert.assertEquals(-1, species.heightToDbh(1), EPSILON);
+		Assert.assertEquals(0.43, round(species.heightToDbh(2)), EPSILON);
+		Assert.assertEquals(2.47, round(species.heightToDbh(5)), EPSILON);
+		Assert.assertEquals(6.65, round(species.heightToDbh(10)), EPSILON);
+		Assert.assertEquals(59.95, round(species.heightToDbh(22)), EPSILON);
+		Assert.assertEquals(-1, round(species.heightToDbh(23)), EPSILON);
+	}
+	
+	/**
 	 * Verify height to dbh is correct for Pinus Strobus.
 	 */
 	@Test

@@ -2,14 +2,11 @@ package edu.mtu.cabals.wup;
 
 import edu.mtu.utilities.Constants;
 
-// Note that Red Maple should be ready for harvest at sawtimber in about 60 years from seeding
-// 
-// https://www.na.fs.fed.us/pubs/silvics_manual/volume_2/acer/rubrum.htm
-// http://www.nrs.fs.fed.us/pubs/rp/rp_nc257.pdf 
-// http://dnr.wi.gov/topic/ForestManagement/documents/24315/51.pdf
 public class AcerRebrum implements WupSpecies {		
 		
-	public final static double MaxHeight = 30d;
+	private final static double GrowthPerYear = 0.57;	// cm/year
+	private final static double MaxDbh = 76.0;			// cm
+	private final static double MaxHeight = 30;			// m 
 	
 	// Jenkins et al., 2003
 	public double getAboveGroundBiomass(double dbh) {
@@ -32,38 +29,32 @@ public class AcerRebrum implements WupSpecies {
 		return (ht / 3.281);		// ht in ft to m
 	}
 	
-	/**
-	 * Get the DBH (cm) of the tree given the height (m); (Kershaw et al. 2008)
-	 * 
-	 * @return The DBH (cm) or -1 if the height is out of bounds ([2, 30])
-	 */
+	// Kershaw et al. 2008
 	@Override
 	public double heightToDbh(double height) {
 		double b1 = 29.007, b2 = 0.053, b3 = 1.175;	
-		
-		// Check to make sure we can do math
+
 		if (height < 2 || height > MaxHeight) { return -1; }
 		
-		double dbh = -Math.log(Math.pow(1 - Math.pow((height - Constants.DbhTakenAt) / b1, 1 / b3), 1 / b2));
+		double dbh = -Math.log(1 - Math.pow((height - Constants.DbhTakenAt) / b1, 1 / b3)) / b2;
 		return dbh;
 	}
 
-	public String getName() {
-		return "RED MAPLE";
-	}
 
-	public double getDbhGrowth() {
-		return 0.57;
-	}
+	// Silvics Manual, vol. 2, conservative estimate
+	@Override
+	public double getDbhGrowth() { return GrowthPerYear; }
 
-	public double getMaximumDbh() {
-		return 76.0;
-	}
-	
-	public String getDataFile() {
-		return "data/AcerRebrum.csv";
-	}
-	
+	// Silvics Manual, vol. 2, high-end mature tree estimate
+	@Override
+	public double getMaximumDbh() { return MaxDbh; }
+
 	@Override
 	public double getMaximumHeight() { return MaxHeight; }
+
+	@Override
+	public String getName() { return "Red Maple"; }
+
+	@Override
+	public String getDataFile() { return "data/AcerRebrum.csv"; }	
 }

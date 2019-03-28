@@ -111,6 +111,9 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				double max = (evh.getMax() < reference.getMaximumHeight()) ? evh.getMax() : reference.getMaximumHeight(); 
 				double treeHeight = min + (max - min) * random.nextDouble();
 				double dbh = reference.heightToDbh(treeHeight);
+				if (dbh == -1) {
+					throw new IllegalArgumentException("Result of heightToDbh cannot be -1, height: " + treeHeight);
+				}
 				
 				// Use the DBH and cover min/max bounds to approximate the number of trees, note we assume the pixel is 30x30 meters
 				min = Math.floor((900 * evc.getMin()) / (Math.PI * Math.pow(dbh / 10, 2)));

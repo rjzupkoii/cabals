@@ -1,11 +1,12 @@
 package edu.mtu.cabals.wup;
 
-// https://www.forestasyst.org/hardwoods/alleghaniensis.htm
+import edu.mtu.utilities.Constants;
+
 public class BetulaAlleghaniensis implements WupSpecies {
 	
-	public final static double GrowthPerYear = 2.5d;	// cm/year
-	public final static double MaxDbh = 56.7d;			// cm
-	public final static double MaxHeight = 34.7d;		// m 
+	public final static double GrowthPerYear = 0.51;	// cm/year
+	public final static double MaxDbh = 60;				// cm
+	public final static double MaxHeight = 22;			// m 
 	
 	// Jenkins et al., 2003
 	@Override
@@ -31,41 +32,31 @@ public class BetulaAlleghaniensis implements WupSpecies {
 		return (ht / 3.281);		// ht in ft to m
 	}
 	
+	// Peng et al., 2001
 	@Override
 	public double heightToDbh(double height) {
+		double b1 = 20.7576, b2 = 0.0858, b3 = 1.0532;	
+
+		if (height < 2 || height > MaxHeight) { return -1; }
 		
-		// TODO Yellow Birch, height to DBH
-		
-		return 0;
+		double dbh = -Math.log(1 - Math.pow((height - Constants.DbhTakenAt) / b1, 1 / b3)) / b2;
+		return dbh;	
 	}
 	
+	// Silvics Manual, vol. 2, assuming 46 cm in about 90 years
 	@Override
-	public String getName() { return "Yellow Birch"; }
+	public double getDbhGrowth() { return GrowthPerYear; }
 
+	// Silvics Manual, vol. 2, 56 cm is financially mature, 46 cm is more common, constrain with a bit of space to work with 
 	@Override
-	public double getDbhGrowth() {
-		
-		// TODO Yellow Birch, DBH growth
-		
-		return 0;
-	}
-
-	@Override
-	public double getMaximumDbh() {
-		
-		// TODO Yellow Birch, max DBH
-		
-		return 0;
-	}
+	public double getMaximumDbh() { return MaxDbh; }
 
 	@Override
 	public double getMaximumHeight() { return MaxHeight; }
 
 	@Override
-	public String getDataFile() {
-		
-		// TODO Yellow Birch, stocking file
-		
-		return null;
-	}
+	public String getName() { return "Yellow Birch"; }
+	
+	@Override
+	public String getDataFile() { return "data/BetulaAlleghaniensis.csv"; }
 }
