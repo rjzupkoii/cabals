@@ -13,6 +13,7 @@ import edu.mtu.cabals.model.TimberMarketplace;
 import edu.mtu.cabals.model.WupModel;
 import edu.mtu.cabals.wup.WupSpecies;
 import edu.mtu.environment.Forest;
+import edu.mtu.environment.NlcdClassification;
 import edu.mtu.environment.Stand;
 import edu.mtu.steppables.LandUseGeomWrapper;
 import sim.field.grid.IntGrid2D;
@@ -171,7 +172,7 @@ public abstract class Harvester {
 			if (visualBuffer.get(point.x, point.y) != 0) {
 				report.visualImpact += area;
 			}
-			if (wetlands.get(point.x, point.y) != 0) {
+			if (wetlands.get(point.x, point.y) == NlcdClassification.WoodyWetlands.getValue()) {
 				report.wetlandImpact += area;
 			}
 		}
