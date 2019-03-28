@@ -181,8 +181,8 @@ public class WupModel extends ForestSim {
 		agent.setTargetHarvest(value);
 		
 		// Set target profit
-		mean = parameters.getNipfProftMean();
-		sd = parameters.getNipfProftSd();
+		mean = parameters.getNipfProfitMean();
+		sd = parameters.getNipfProfitSd();
 		value = random.nextGaussian() * sd + mean;
 		agent.setMinimumProfit(value);
 		

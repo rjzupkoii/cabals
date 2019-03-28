@@ -15,14 +15,20 @@ public class Parameters extends ParameterBase {
 	private String landfireCoverRaster;
 	private String visualBufferRaster;
 	private String wetlandsRaster;
-		
+
+	// Harvesting settings
+	private double merchantableProductivity;
+	private double biomassChipping;
+	private double dieselPerLiter, kmPerLiter, kmPerHour;
+	private double loggerPerHour, driverPerHour;	
+	
 	// CF settings
 	private double cfMarkup;
 	private int cfYears;
 	
 	// NIPF settings
 	private double nipfMarkup;
-	private double nipfProftMean, nipfProftSd;
+	private double nipfProfitMean, nipfProfitSd;
 	private double nipfStandMean, nipfStandSd;
 	private double nipfWoodyBiomassMean, nipfWoodyBiomassSd;
 		
@@ -58,12 +64,12 @@ public class Parameters extends ParameterBase {
 		return nipfStandSd;
 	}
 	
-	public double getNipfProftMean() {
-		return nipfProftMean;
+	public double getNipfProfitMean() {
+		return nipfProfitMean;
 	}
 	
-	public double getNipfProftSd() {
-		return nipfProftSd;
+	public double getNipfProfitSd() {
+		return nipfProfitSd;
 	}
 	
 	public int getCfYears() {
@@ -92,6 +98,34 @@ public class Parameters extends ParameterBase {
 
 	public String getWetlandsRaster() {
 		return wetlandsRaster;
+	}
+	
+	public double getMerchantableProductivity() {
+		return merchantableProductivity;
+	}
+	
+	public double getBiomassChipping() {
+		return biomassChipping;
+	}
+
+	public double getDieselPerLiter() {
+		return dieselPerLiter;
+	}
+
+	public double getKmPerLiter() {
+		return kmPerLiter;
+	}
+
+	public double getLoggerPerHour() {
+		return loggerPerHour;
+	}
+
+	public double getDriverPerHour() {
+		return driverPerHour;
+	}
+	
+	public double getKmPerHour() {
+		return kmPerHour;
 	}
 	
 	public void setParcelShapeFile(String value) {
@@ -126,12 +160,12 @@ public class Parameters extends ParameterBase {
 		nipfStandSd = value;
 	}
 
-	public void setNipfProftMean(double value) {
-		nipfProftMean = value;
+	public void setNipfProfitMean(double value) {
+		nipfProfitMean = value;
 	}
 
-	public void setNipfProftSd(double value) {
-		nipfProftSd = value;
+	public void setNipfProfitSd(double value) {
+		nipfProfitSd = value;
 	}
 
 	public void setCfYears(int value) {
@@ -162,4 +196,31 @@ public class Parameters extends ParameterBase {
 		wetlandsRaster = value;
 	}
 
+	public void setMerchantableProductivity(double value) {
+		merchantableProductivity = value;
+	}
+
+	public void setBiomassChipping(double value) {
+		biomassChipping = value;
+	}
+
+	public void setDieselPerLiter(double value) {
+		dieselPerLiter = value;
+	}
+
+	public void setKmPerLiter(double value) {
+		kmPerLiter = value;
+	}
+
+	public void setLoggerPerHour(double value) {
+		loggerPerHour = value;
+	}
+
+	public void setDriverPerHour(double value) {
+		driverPerHour = value;
+	}
+
+	public void setKmPerHour(double value) {
+		kmPerHour = value;
+	}
 }

@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
+import edu.mtu.cabals.WupConstants;
+import edu.mtu.cabals.model.Parameters;
 import edu.mtu.cabals.model.TimberMarketplace;
 import edu.mtu.cabals.model.WupModel;
 import edu.mtu.cabals.wup.WupSpecies;
@@ -179,33 +181,38 @@ public abstract class Harvester {
 		// Apply the economic calculations
 		report.labor = harvestDuration(report.merchantable);
 		report.biomassRecoverable = report.woodyBiomass * (1 - woodyBiomassRetention);
-		report.biomassLabor = biomassLabor(report.biomassRecoverable);
-		report.biomassCost = biomassCost(report.biomassLabor, lu.getDoubleAttribute("NEAR_KM"));
+		results = biomassCosts(report.biomassRecoverable, lu.getDoubleAttribute("NEAR_KM"));
+		report.biomassLabor = results.getValue0();
+		report.biomassCost = results.getValue1();
 		
 		return report;
 	}
 	
 	private double harvestDuration(double merchantable) {
+		Parameters parameters = WupModel.getParameters();
 		
-		// TODO Calculate the harvest duration based upon merchantable biomass
-		
-		return 0.0;
+		double hours = merchantable / parameters.getMerchantableProductivity();
+		hours = Math.round(hours * 100d) / 100d;
+		return hours;
 	}
 	
-	private double biomassLabor(double biomass) {
+	// Returns tuple of [labor hours, total cost]
+	private Pair<Double, Double> biomassCosts(double biomass, double distance) {
+		Parameters parameters = WupModel.getParameters();
 		
-		// TODO Calculate the woody biomass labor based upon recoverable biomass
+		// Calculate total hours
+		double chippingHr = biomass / parameters.getBiomassChipping();
+		int trips = (int)Math.ceil(biomass / WupConstants.ChipVanCapacity); 
+		double chipVanHr = (distance * trips) / parameters.getKmPerHour();
+		double hours = chippingHr + chipVanHr;
 		
-		return 0.0;
+		// Calculate total costs
+		double fuel = ((distance * trips) / parameters.getKmPerLiter()) * parameters.getDieselPerLiter();
+		double costs = fuel + chippingHr * parameters.getLoggerPerHour() + chipVanHr * parameters.getDriverPerHour();
+		
+		return new Pair<Double, Double>(hours, costs);		
 	}
-	
-	private double biomassCost(double labor, double distance) {
 		
-		// TODO Calculate the woody biomass cost based upon labor and distance to travel
-		
-		return 0.0;
-	}
-	
 	/**
 	 * Get the report of harvesting.
 	 */
