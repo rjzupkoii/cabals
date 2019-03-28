@@ -8,14 +8,16 @@ public class PinusStrobus implements WupSpecies {
 	
 	public final static double MaxHeight = 50d;
 	
+	// Jenkins et al., 2003
 	public double getAboveGroundBiomass(double dbh) {
-		// Jenkins et al., 2003 - https://www.fs.fed.us/ne/durham/4104/papers/Heathbiomass_eqns.pdf
+		//  - https://www.fs.fed.us/ne/durham/4104/papers/Heathbiomass_eqns.pdf
 		double beta0 = -2.5356, beta1 = 2.4349;
 		return Math.exp(beta0 + beta1 * Math.log(dbh));
 	}
 	
+	// Jenkins et al., 2003
 	public double getStemWoodBiomassRatio(double dbh) {
-		// Jenkins et al., 2003 - https://www.fs.fed.us/ne/durham/4104/papers/Heathbiomass_eqns.pdf
+		//  - https://www.fs.fed.us/ne/durham/4104/papers/Heathbiomass_eqns.pdf
 		double beta0 = -0.3737, beta1 = -1.8055;
 		return Math.exp(beta0 + (beta1 / dbh));
 	}
