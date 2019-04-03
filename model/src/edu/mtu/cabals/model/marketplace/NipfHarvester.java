@@ -9,6 +9,9 @@ import edu.mtu.steppables.LandUseGeomWrapper;
 public class NipfHarvester extends Harvester {
 	
 	private static NipfHarvester instance;
+	
+	private double currentHours;
+	private double annualLimit;
 
 	private NipfHarvester() { }
 	
@@ -31,6 +34,11 @@ public class NipfHarvester extends Harvester {
 	 */
 	public void requestHarvest(LandUseGeomWrapper lu, List<Point> patch, double woodyBiomassBid) {
 		
+		// Have we hit the limit?
+		if (currentHours >= annualLimit) {
+			return;
+		}
+		
 		// Conduct the harvest
 		HarvestReport report = harvest(lu, patch);
 		
@@ -41,7 +49,21 @@ public class NipfHarvester extends Harvester {
 			Transporter.getInstance().transport(lu.getDoubleAttribute("NEAR_KM"), report.biomassRecoverable);
 		}
 		
-		// Update the annual report
+		// Update the annual report and note the hours
 		update(report);
+		currentHours += report.labor;
+	}
+	
+	@Override
+	public void reset() {
+		currentHours = 0;
+		super.reset();
+	}
+	
+	/**
+	 * Set the annual limit to the number of hours NIPFs can harvest.
+	 */
+	public void setAnnualHarvestLimit(double value) {
+		annualLimit = value;
 	}
 }

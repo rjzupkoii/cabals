@@ -201,8 +201,11 @@ public class WupModel extends ForestSim {
 	 */
 	@Override
 	protected void initializeMarketplace() throws ForestSimException {
-		CfHarvester.getInstance().setMarkup(parameters.getCfMarkup());
-		NipfHarvester.getInstance().setMarkup(parameters.getNipfMarkup());
+		CfHarvester.getInstance().setMarkup(parameters.getMarkup());
+		
+		NipfHarvester harvester = NipfHarvester.getInstance();
+		harvester.setMarkup(parameters.getMarkup());
+		harvester.setAnnualHarvestLimit(parameters.getNipfHarvestHours());
 	}
 
 	@Override
