@@ -21,13 +21,13 @@ public class Parameters extends ParameterBase {
 	private double biomassChipping;
 	private double dieselPerLiter, kmPerLiter, kmPerHour;
 	private double loggerPerHour, driverPerHour;	
+	private double markup;
 	
 	// CF settings
-	private double cfMarkup;
 	private int cfYears;
 	
 	// NIPF settings
-	private double nipfMarkup;
+	private double nipfHarvestHours;
 	private double nipfProfitMean, nipfProfitSd;
 	private double nipfStandMean, nipfStandSd;
 	private double nipfWoodyBiomassMean, nipfWoodyBiomassSd;
@@ -76,12 +76,8 @@ public class Parameters extends ParameterBase {
 		return cfYears;
 	}
 	
-	public double getCfMarkup() {
-		return cfMarkup;
-	}
-
-	public double getNipfMarkup() {
-		return nipfMarkup;
+	public double getMarkup() {
+		return markup;
 	}
 	
 	public double getNipfWoodyBiomassMean() {
@@ -128,6 +124,10 @@ public class Parameters extends ParameterBase {
 		return kmPerHour;
 	}
 	
+	public double getNipfHarvestHours() {
+		return nipfHarvestHours;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -172,12 +172,8 @@ public class Parameters extends ParameterBase {
 		cfYears = value;
 	}
 
-	public void setCfMarkup(double value) {
-		cfMarkup = value;
-	}
-
-	public void setNipfMarkup(double value) {
-		nipfMarkup = value;
+	public void setmarkup(double value) {
+		markup = value;
 	}
 
 	public void setNipfWoodyBiomassMean(double value) {
@@ -222,5 +218,9 @@ public class Parameters extends ParameterBase {
 
 	public void setKmPerHour(double value) {
 		kmPerHour = value;
+	}
+
+	public void setNipfHarvestHours(double value) {
+		nipfHarvestHours = value;
 	}
 }
