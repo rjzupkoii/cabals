@@ -241,8 +241,11 @@ public abstract class Harvester {
 		Forest forest = Forest.getInstance();
 		TimberMarketplace marketplace = TimberMarketplace.getInstance();
 		for (Point point : points) {
-			Stand stand = forest.getStand(point);
+			Stand stand = forest.getStand(point); 
 			double marketPrice = marketplace.getPrice((WupSpecies)stand.dominateSpecies, stand.arithmeticMeanDiameter);
+			
+			// TODO Convert to cords or MBF as need for the price
+			
 			bid.bid += stand.numberOfTrees * marketPrice;
 		}
 		

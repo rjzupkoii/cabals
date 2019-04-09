@@ -71,8 +71,14 @@ public class TimberMarketplace {
 			// Load the data
 			prices = new HashMap<String, Double[][]>();
 			for (CSVRecord record : records) {
-				// Have we seen this before?
+				// Is this the CWD value?
 				String key = record.get("SPECIES");
+				if (key.equals("CWD")) {
+					woodyBiomassPrice = Double.parseDouble(record.get("MEAN"));
+					continue;
+				}
+				
+				// Have we seen this before?
 				if (!prices.containsKey(key)) {
 					prices.put(key, new Double[2][2]);
 				}
@@ -114,7 +120,7 @@ public class TimberMarketplace {
 	/**
 	 * Set the current price for woody biomass (green ton)
 	 */
-	public void setWoodyBiomassPrice(double woodyBiomassPrice) {
-		this.woodyBiomassPrice = woodyBiomassPrice;
+	public void setWoodyBiomassPrice(double value) {
+		woodyBiomassPrice = value;
 	}
 }
