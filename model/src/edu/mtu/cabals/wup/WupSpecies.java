@@ -3,6 +3,7 @@ package edu.mtu.cabals.wup;
 import edu.mtu.environment.Species;
 
 public interface WupSpecies extends Species {
+	double getBackThickness();
 	double getDbhGrowth();
 	double getMaximumDbh();
 	double getMaximumHeight();

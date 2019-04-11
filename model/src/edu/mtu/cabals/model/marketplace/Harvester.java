@@ -22,6 +22,9 @@ import sim.field.grid.IntGrid2D;
  */
 public abstract class Harvester {
 	
+	// Multiplier to go from dry to green ton, based on Dulys-Nusbaum et al., 2019
+	public final static double DryToGreen = 2;
+	
 	private double markup;
 	private double woodyBiomassRetention;
 	private HarvestReport annualReport = new HarvestReport();
@@ -162,8 +165,10 @@ public abstract class Harvester {
 		// Update the report with the results of the harvest
 		HarvestReport report = new HarvestReport();
 		double area = forest.getPixelArea();
-		report.merchantable = results.getValue0() / 1000;							// Stem / 1000 for metric tons
+		report.merchantable = (results.getValue0() / 1000);							// Stem / 1000 for metric tons
+		report.merchantable *= DryToGreen;											// dry to green tons
 		report.woodyBiomass = (results.getValue1() - results.getValue0()) / 1000;	// (Aboveground - Stem) / 1000 for metric tons
+		report.woodyBiomass *= DryToGreen;											// dry to green tons
 		report.harvestedArea = (patch.size() * area) / 10000;		// sq.m to ha
 		
 		// Check to see what the impacts are via GIS
@@ -177,7 +182,7 @@ public abstract class Harvester {
 		}
 		report.visualImpact /= 10000;	// sq.m to ha
 		report.wetlandImpact /= 10000;	// sq.m to ha
-				
+						
 		// Apply the economic calculations
 		report.labor = harvestDuration(report.merchantable);
 		report.biomassRecoverable = report.woodyBiomass * (1 - woodyBiomassRetention);

@@ -9,8 +9,12 @@ import java.util.Random;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
+import edu.mtu.cabals.model.marketplace.Harvester;
 import edu.mtu.cabals.wup.WupSpecies;
 import edu.mtu.environment.Stand;
+import edu.mtu.measures.TimberMeasures;
+import edu.mtu.simulation.ForestSimException;
+import edu.mtu.utilities.Constants;
 
 /**
  * The timber marketplace contains the basic price information and allows for 
@@ -44,9 +48,44 @@ public class TimberMarketplace {
 	 * @return The bid for the stand based upon market prices.
 	 */
 	public double calculateBid(Stand stand) {
-		// TODO Placeholder function
-		
-		return 0.0;
+		try {
+			// Start by getting the price
+			WupSpecies species = (WupSpecies)stand.dominateSpecies;
+			double price = getPrice(species, stand.arithmeticMeanDiameter);
+			
+			
+			// If there was no price, assume it's just going to get chipped
+			if (price == 0) {
+				double biomass = species.getAboveGroundBiomass(stand.arithmeticMeanDiameter);
+				double bid = biomass * Harvester.DryToGreen * stand.numberOfTrees * woodyBiomassPrice;
+				return bid;
+			}
+	
+			// Are we looking at saw logs?
+			if (isSawLog(species, stand.arithmeticMeanDiameter)) {
+				double dib = (stand.arithmeticMeanDiameter - species.getBackThickness()) / Constants.InchToCentimeter;
+				double length = (species.getHeight(stand.arithmeticMeanDiameter) / Constants.InchToCentimeter) / 12;
+				double bid = price * (TimberMeasures.scribnerLogRule(dib, length) * stand.numberOfTrees) / 1000;
+				return bid;
+			}
+			
+			// Must have been pulpwood
+			double bid = TimberMeasures.metricDbhToCord(stand.arithmeticMeanDiameter) * stand.numberOfTrees * price;
+			return bid;
+			
+		} catch (ForestSimException ex) {
+			System.err.println(ex);
+			System.exit(-1);
+			return -1;
+		}
+	}
+	
+	/**
+	 * Return true if the DBH is saw log, false otherwise, assumed getPrice() has already been called.
+	 */
+	private boolean isSawLog(WupSpecies species, double dbh) {
+		Double[][] chart = prices.get(species.getName());
+		return (dbh >= chart[Sawlog][Size]);
 	}
 		
 	/**
@@ -64,7 +103,7 @@ public class TimberMarketplace {
 		if (chart[Pulpwood][Size] < dbh && dbh < chart[Sawlog][Size]) { return chart[Pulpwood][Price]; }
 		return chart[Sawlog][Price];
 	}
-
+	
 	/**
 	 * Get the current price for woody biomass (green ton)
 	 */
