@@ -11,7 +11,6 @@ import edu.mtu.cabals.WupConstants;
 import edu.mtu.cabals.model.Parameters;
 import edu.mtu.cabals.model.TimberMarketplace;
 import edu.mtu.cabals.model.WupModel;
-import edu.mtu.cabals.wup.WupSpecies;
 import edu.mtu.environment.Forest;
 import edu.mtu.environment.NlcdClassification;
 import edu.mtu.environment.Stand;
@@ -38,7 +37,7 @@ public abstract class Harvester {
 	 * @param patch The size (ha) of the patch to be harvested.
 	 * @return The points in the patch, or null if a match cannot be found.
 	 */
-	public List<Point> findPatch(final Point[] parcel, double patch) {
+	protected List<Point> findPatch(final Point[] parcel, double patch) {
 				
 		// If the patch is greater than or equal to the size of the parcel, just return it
 		double width = Math.sqrt(Forest.getInstance().getPixelArea());		// Assume square pixels
@@ -241,12 +240,9 @@ public abstract class Harvester {
 		Forest forest = Forest.getInstance();
 		TimberMarketplace marketplace = TimberMarketplace.getInstance();
 		for (Point point : points) {
-			Stand stand = forest.getStand(point); 
-			double marketPrice = marketplace.getPrice((WupSpecies)stand.dominateSpecies, stand.arithmeticMeanDiameter);
-			
-			// TODO Convert to cords or MBF as need for the price
-			
-			bid.bid += stand.numberOfTrees * marketPrice;
+			Stand stand = forest.getStand(point);
+			double marketPrice = marketplace.calculateBid(stand);			
+			bid.bid += marketPrice;
 		}
 		
 		// Return the bid

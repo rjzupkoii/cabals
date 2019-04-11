@@ -10,6 +10,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
 import edu.mtu.cabals.wup.WupSpecies;
+import edu.mtu.environment.Stand;
 
 /**
  * The timber marketplace contains the basic price information and allows for 
@@ -34,6 +35,18 @@ public class TimberMarketplace {
 			instance = new TimberMarketplace();
 		}
 		return instance;
+	}
+	
+	/**
+	 * Calculate the bid for the forest stand.
+	 * 
+	 * @param stand The stand to bid on.
+	 * @return The bid for the stand based upon market prices.
+	 */
+	public double calculateBid(Stand stand) {
+		// TODO Placeholder function
+		
+		return 0.0;
 	}
 		
 	/**
