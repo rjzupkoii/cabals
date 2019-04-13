@@ -11,7 +11,6 @@ public class CfHarvester extends Harvester {
 	private static CfHarvester instance;
 	
 	private boolean contract;
-	private double groundCoverPercent;
 		
 	private CfHarvester() { }
 	
@@ -37,17 +36,15 @@ public class CfHarvester extends Harvester {
 		HarvestReport report = harvest(lu, patch);
 		
 		// Do we have to, or want to deliver woody biomass?
+		boolean biomassCollected = false;
 		double value = TimberMarketplace.getInstance().getWoodyBiomassPrice() * report.biomassRecoverable;
 		if (contract || value > report.biomassCost * getMarkup()) {
 			Transporter.getInstance().transport(lu.getDoubleAttribute("NEAR_KM"), report.biomassRecoverable);
+			biomassCollected = true;
 		}
 		
 		// Update the annual report
-		update(report);
-	}
-
-	public double getGroundCoverPercent() {
-		return groundCoverPercent;
+		update(report, biomassCollected);
 	}
 	
 	public boolean underContract() {
@@ -56,9 +53,5 @@ public class CfHarvester extends Harvester {
 
 	public void setContract(boolean value) {
 		contract = value;
-	}
-
-	public void setGroundCoverPercent(double value) {
-		groundCoverPercent = value;
 	}
 }

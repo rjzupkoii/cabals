@@ -165,10 +165,9 @@ public abstract class Harvester {
 		// Update the report with the results of the harvest
 		HarvestReport report = new HarvestReport();
 		double area = forest.getPixelArea();
-		report.merchantable = (results.getValue0() / 1000);							// Stem / 1000 for metric tons
-		report.merchantable *= DryToGreen;											// dry to green tons
-		report.woodyBiomass = (results.getValue1() - results.getValue0()) / 1000;	// (Aboveground - Stem) / 1000 for metric tons
-		report.woodyBiomass *= DryToGreen;											// dry to green tons
+		report.biomass = (results.getValue1() / 1000) * DryToGreen;					// Above Ground / 1000 for metric tons, converted to green tons
+		report.merchantable = (results.getValue0() / 1000) * DryToGreen;			// Stem / 1000 for metric tons, converted to green tons
+		report.cwd = report.biomass - report.merchantable;							// Above ground CWD produced, green tons
 		report.harvestedArea = (patch.size() * area) / 10000;		// sq.m to ha
 		
 		// Check to see what the impacts are via GIS
@@ -185,7 +184,7 @@ public abstract class Harvester {
 						
 		// Apply the economic calculations
 		report.labor = harvestDuration(report.merchantable);
-		report.biomassRecoverable = report.woodyBiomass * (1 - woodyBiomassRetention);
+		report.biomassRecoverable = report.cwd * (1 - woodyBiomassRetention);
 		results = biomassCosts(report.biomassRecoverable, lu.getDoubleAttribute("NEAR_KM"));
 		report.biomassLabor = results.getValue0();
 		report.biomassCost = results.getValue1();
@@ -262,12 +261,20 @@ public abstract class Harvester {
 	/**
 	 * Update the annual harvest report with the harvest.
 	 */
-	protected void update(HarvestReport harvest) {
-		annualReport.labor += harvest.labor;
+	protected void update(HarvestReport harvest, boolean biomassCollected) {
+		annualReport.biomass += harvest.biomass;
 		annualReport.merchantable += harvest.merchantable;
+		annualReport.cwd += harvest.cwd;
+		
 		annualReport.visualImpact += harvest.visualImpact;
 		annualReport.wetlandImpact += harvest.wetlandImpact;
-		annualReport.woodyBiomass += harvest.woodyBiomass;
+		
+		annualReport.labor += harvest.labor;
+		
+		if (biomassCollected) {
+			annualReport.biomassRecoverable += harvest.biomassRecoverable;
+			annualReport.biomassLabor += harvest.biomassLabor;
+		}
 	}
 
 	public double getMarkup() { return markup; }

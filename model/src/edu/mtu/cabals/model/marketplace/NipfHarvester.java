@@ -43,14 +43,16 @@ public class NipfHarvester extends Harvester {
 		HarvestReport report = harvest(lu, patch);
 		
 		// Are we doing an integrated harvest?
+		boolean biomassCollected = false;
 		double value = report.biomassRecoverable * TimberMarketplace.getInstance().getWoodyBiomassPrice();
 		double cost = report.biomassCost + (report.harvestedArea * woodyBiomassBid);
 		if (value > cost * getMarkup()) {
 			Transporter.getInstance().transport(lu.getDoubleAttribute("NEAR_KM"), report.biomassRecoverable);
+			biomassCollected = true;
 		}
 		
 		// Update the annual report and note the hours
-		update(report);
+		update(report, biomassCollected);
 		currentHours += report.labor;
 	}
 	

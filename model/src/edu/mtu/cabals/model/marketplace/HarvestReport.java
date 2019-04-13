@@ -1,8 +1,10 @@
 package edu.mtu.cabals.model.marketplace;
 
 public class HarvestReport {
+	public double biomass;				// green tons
 	public double merchantable;			// green tons
-	public double woodyBiomass;			// green tons
+	public double cwd;					// green tons
+
 	public double harvestedArea;		// ha
 	public double visualImpact;			// ha
 	public double wetlandImpact;		// ha

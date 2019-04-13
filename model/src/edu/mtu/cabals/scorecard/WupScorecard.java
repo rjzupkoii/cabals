@@ -72,11 +72,17 @@ public class WupScorecard implements Scorecard {
 	}
 	
 	private void writeHarvestReport(HarvestReport report, int index) throws IOException {
+		writers[index].write(report.biomass);
 		writers[index].write(report.merchantable);
-		writers[index].write(report.woodyBiomass);
+		writers[index].write(report.cwd);
+		
 		writers[index].write(report.visualImpact);
 		writers[index].write(report.wetlandImpact);
+		
 		writers[index].write(report.labor);
+		
+		writers[index].write(report.biomassRecoverable);
+		writers[index].write(report.biomassLabor);
 		writers[index].newLine();
 	}
 	
