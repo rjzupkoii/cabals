@@ -51,8 +51,7 @@ public class TimberMarketplace {
 		try {
 			// Start by getting the price
 			WupSpecies species = (WupSpecies)stand.dominateSpecies;
-			double price = getPrice(species, stand.arithmeticMeanDiameter);
-			
+			double price = getPrice(species, stand.arithmeticMeanDiameter);	
 			
 			// If there was no price, assume it's just going to get chipped
 			if (price == 0) {
@@ -63,7 +62,7 @@ public class TimberMarketplace {
 	
 			// Are we looking at saw logs?
 			if (isSawLog(species, stand.arithmeticMeanDiameter)) {
-				double dib = (stand.arithmeticMeanDiameter - species.getBackThickness()) / Constants.InchToCentimeter;
+				double dib = (stand.arithmeticMeanDiameter - species.getBarkThickness() * 2) / Constants.InchToCentimeter;
 				double length = (species.getHeight(stand.arithmeticMeanDiameter) / Constants.InchToCentimeter) / 12;
 				double bid = price * (TimberMeasures.scribnerLogRule(dib, length) * stand.numberOfTrees) / 1000;
 				return bid;

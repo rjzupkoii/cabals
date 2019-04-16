@@ -59,4 +59,8 @@ public class BetulaAlleghaniensis implements WupSpecies {
 	
 	@Override
 	public String getDataFile() { return "data/BetulaAlleghaniensis.csv"; }
+
+	// Sullivan, 1994
+	@Override
+	public double getBarkThickness() { return 1.27; }
 }

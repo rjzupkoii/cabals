@@ -9,3 +9,7 @@ Jenkins, J. C., Chojnacky, D. C., Heath, L. S., & Birdsey, R. A. (2003). Nationa
 Kershaw, J. A., Jr., Morrissey, R. C., Jacobs, D. F., Seifert, J. R., & McCarter, J. B. (2008, April 8). Dominant height-based height-diameter equations for trees in southern Indiana. 341–355. Retrieved from https://www.fs.usda.gov/treesearch/pubs/14039
 
 Peng, C., Zhang, L., & Liu, J. (2001). Developing and Validating Nonlinear Height–Diameter Models for Major Tree Species of Ontario’s Boreal Forests. Northern Journal of Applied Forestry, 18(3), 87–94. https://doi.org/10.1093/njaf/18.3.87
+
+Sullivan, J. (1994). Betula alleghaniensis. Retrieved from U.S. Department of Agriculture, Forest Service, Rocky Mountain Research Station,  Fire Sciences Laboratory., https://www.fs.fed.us/database/feis/plants/tree/betall/all.html
+
+Wenger, K. F. (Ed.). (1984). Forestry Handbook (Second Edition). John Wiley & Sons, Inc.

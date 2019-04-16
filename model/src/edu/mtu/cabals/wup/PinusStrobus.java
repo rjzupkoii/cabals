@@ -58,4 +58,8 @@ public class PinusStrobus implements WupSpecies {
 	
 	@Override
 	public String getDataFile() { return "data/PinusStrobus.csv"; }
+
+	// Wenger, 1984; estimate assuming 22.86 in DBH at harvest
+	@Override
+	public double getBarkThickness() { return 4.826; }
 }

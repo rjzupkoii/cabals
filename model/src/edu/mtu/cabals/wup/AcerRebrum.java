@@ -56,5 +56,9 @@ public class AcerRebrum implements WupSpecies {
 	public String getName() { return "Red Maple"; }
 
 	@Override
-	public String getDataFile() { return "data/AcerRebrum.csv"; }	
+	public String getDataFile() { return "data/AcerRebrum.csv"; }
+
+	// Wenger, 1984; estimate assuming 27.94 in DBH at harvest
+	@Override
+	public double getBarkThickness() { return 2.9464; }	
 }
