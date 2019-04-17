@@ -14,6 +14,7 @@ import java.util.logging.SimpleFormatter;
 import ec.util.MersenneTwisterFast;
 import edu.mtu.cabals.model.marketplace.CfHarvester;
 import edu.mtu.cabals.model.marketplace.NipfHarvester;
+import edu.mtu.cabals.model.marketplace.Transporter;
 import edu.mtu.cabals.model.steppable.CfAgent;
 import edu.mtu.cabals.model.steppable.NipfAgent;
 import edu.mtu.cabals.model.steppable.WupAgent;
@@ -206,6 +207,13 @@ public class WupModel extends ForestSim {
 		NipfHarvester harvester = NipfHarvester.getInstance();
 		harvester.setMarkup(parameters.getMarkup());
 		harvester.setAnnualHarvestLimit(parameters.getNipfHarvestHours());
+		
+		Transporter transporter = Transporter.getInstance();
+		transporter.setCapacity(parameters.getChipVanCapacity());
+		transporter.setDieselPerLiter(parameters.getDriverPerHour());
+		transporter.setDriverPerHour(parameters.getDriverPerHour());
+		transporter.setKmPerHour(parameters.getKmPerHour());
+		transporter.setKmPerLiter(parameters.getKmPerLiter());
 	}
 
 	@Override

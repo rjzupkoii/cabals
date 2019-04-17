@@ -19,10 +19,16 @@ public class Parameters extends ParameterBase {
 	// Harvesting settings
 	private double merchantableProductivity;
 	private double biomassChipping;
-	private double dieselPerLiter, kmPerLiter, kmPerHour;
-	private double loggerPerHour, driverPerHour;	
+	private double dieselPerLiter;
+	private double loggerPerHour;	
 	private double markup;
 	
+	// Transportation settings
+	private double chipVanCapacity;
+	private double driverPerHour;
+	private double kmPerHour;
+	private double kmPerLiter;
+		
 	// CF settings
 	private int cfYears;
 	
@@ -128,6 +134,10 @@ public class Parameters extends ParameterBase {
 		return nipfHarvestHours;
 	}
 	
+	public double getChipVanCapacity() {
+		return chipVanCapacity;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -222,5 +232,9 @@ public class Parameters extends ParameterBase {
 
 	public void setNipfHarvestHours(double value) {
 		nipfHarvestHours = value;
+	}
+
+	public void setChipVanCapacity(double value) {
+		chipVanCapacity = value;
 	}
 }

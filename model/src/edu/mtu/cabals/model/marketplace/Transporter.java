@@ -5,15 +5,13 @@ public class Transporter {
 	private static Transporter instance;	
 	
 	private double capacity;
-	private double hourlyPay;
-	private double kmph;
+	private double driverPerHour;
+	private double dieselPerLiter;
+	private double kmPerLiter;
+	private double kmPerHour;
 		
 	private double distance;
 	private double woodyBiomass;
-	
-	private Transporter() { }
-	
-	public double getDistance() { return distance; }
 
 	public static Transporter getInstance() {
 		if (instance == null) {
@@ -21,6 +19,8 @@ public class Transporter {
 		}
 		return instance;
 	}
+
+	public double getDistance() { return distance; }
 	
 	public double getWoodyBiomass() { return woodyBiomass; }
 		
@@ -42,33 +42,50 @@ public class Transporter {
 	 * @return Total payment for transport.
 	 */
 	public double transportCost(double distance, double woodyBiomass) {
-		double trips = Math.ceil(woodyBiomass / capacity) * 2;
-		double hours = (trips * distance) / kmph;
-		double payment = hours * hourlyPay;
-		return payment;
+		double totalDistance = Math.ceil(woodyBiomass / capacity) * distance * 2;
+		double driverPay = (totalDistance / kmPerHour) * driverPerHour;
+		double fuelCost = (totalDistance / kmPerLiter) * dieselPerLiter;
+		
+		return (driverPay + fuelCost);
 	}
 	
 	public double getCapacity() {
 		return capacity;
 	}
-	
-	public double getHourlyPay() {
-		return hourlyPay;
+
+	public double getDriverPerHour() {
+		return driverPerHour;
 	}
 
-	public double getKmph() {
-		return kmph;
+	public double getDieselPerLiter() {
+		return dieselPerLiter;
+	}
+	
+	public double getKmPerLiter() {
+		return kmPerLiter;
+	}
+
+	public double getKmPerHour() {
+		return kmPerHour;
 	}
 
 	public void setCapacity(double capacity) {
 		this.capacity = capacity;
 	}
 	
-	public void setHourlyPay(double value) {
-		hourlyPay = value;
+	public void setDieselPerLiter(double value) {
+		dieselPerLiter = value;
+	}
+	
+	public void setDriverPerHour(double value) {
+		driverPerHour = value;
 	}
 
-	public void setKmph(double value) {
-		kmph = value;
+	public void setKmPerLiter(double value) {
+		kmPerLiter = value;
+	}
+
+	public void setKmPerHour(double value) {
+		kmPerHour = value;
 	}
 }
