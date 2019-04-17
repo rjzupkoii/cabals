@@ -38,9 +38,10 @@ public abstract class Harvester {
 	 * 
 	 * @param parcel The parcel to examine.
 	 * @param patch The size (ha) of the patch to be harvested.
+	 * @param dbh The minimum DBH (cm) of the trees.
 	 * @return The points in the patch, or null if a match cannot be found.
 	 */
-	protected List<Point> findPatch(final Point[] parcel, double patch) {
+	protected List<Point> findPatch(final Point[] parcel, double patch, double dbh) {
 				
 		// If the patch is greater than or equal to the size of the parcel, just return it
 		double width = Math.sqrt(Forest.getInstance().getPixelArea());		// Assume square pixels
@@ -72,8 +73,13 @@ public abstract class Harvester {
 			int y = point.y % divisor;
 			patches[x][y].points.add(point);
 			
+			// Only add the DBH if it is greater than or equal to our target 
+			// minimum. This also introduces a penalty for the square when
+			// it contains a significant number of lower value stands
 			Stand stand = forest.getStand(point);
-			meanDbh[x][y] += stand.arithmeticMeanDiameter;
+			if (stand.arithmeticMeanDiameter >= dbh) {
+				meanDbh[x][y] += stand.arithmeticMeanDiameter;
+			}
 		}
 		
 		// Find the mean DBH and note the max
@@ -227,11 +233,12 @@ public abstract class Harvester {
 	 * 
 	 * @param parcel The parcel to request the bid on.
 	 * @param patch The size (ha) of the patch to be harvested.
+	 * @param dbh The minimum DBH of the harvest.
 	 * @return The bid and the patch being bid on.
 	 */
-	public HarvestBid requestBid(Point[] parcel, double patch) {
+	public HarvestBid requestBid(Point[] parcel, double patch, double dbh) {
 		// Find a patch with the given size
-		List<Point> points = findPatch(parcel, patch);
+		List<Point> points = findPatch(parcel, patch, dbh);
 		if (points == null) {
 			return null;
 		}
