@@ -1,10 +1,9 @@
 package edu.mtu.cabals.model;
 
-import java.util.Random;
-
 import org.junit.Assert;
 import org.junit.Test;
 
+import ec.util.MersenneTwisterFast;
 import edu.mtu.cabals.wup.AcerRebrum;
 import edu.mtu.cabals.wup.BetulaAlleghaniensis;
 import edu.mtu.cabals.wup.PinusStrobus;
@@ -18,7 +17,7 @@ public class TimberMarketplaceTests {
 	@Test
 	public void loadTest() throws ForestSimException {
 		TimberMarketplace tm = TimberMarketplace.getInstance();
-		tm.load("data/prices.csv", new Random());
+		tm.load("data/prices.csv", new MersenneTwisterFast());
 		
 		Assert.assertNotEquals(0.0, tm.getPrice(new AcerRebrum(), 27.94));
 		Assert.assertNotEquals(0.0, tm.getPrice(new BetulaAlleghaniensis(), 27.94));

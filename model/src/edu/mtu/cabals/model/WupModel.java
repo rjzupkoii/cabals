@@ -58,6 +58,7 @@ public class WupModel extends ForestSim {
 			visualBuffer = GisUtility.importRaster(parameters.getVisualBufferRaster());
 		} catch (FileNotFoundException ex) {
 			System.err.println(ex);
+			System.err.println(ex.getStackTrace());
 			System.exit(-1);
 		}
 	}
@@ -200,6 +201,9 @@ public class WupModel extends ForestSim {
 	 */
 	@Override
 	protected void initializeMarketplace() throws ForestSimException {
+		TimberMarketplace tm = TimberMarketplace.getInstance();
+		tm.load(parameters.getPricesFile(), random);
+		
 		CfHarvester.getInstance().setMarkup(parameters.getMarkup());
 		
 		NipfHarvester harvester = NipfHarvester.getInstance();
@@ -256,6 +260,7 @@ public class WupModel extends ForestSim {
 				ParseParameters.read("data/settings.ini", parameters);
 			} catch (ForestSimException ex) {
 				System.err.println(ex);
+				System.err.println(ex.getStackTrace());
 				System.exit(-1);
 			}
 		}

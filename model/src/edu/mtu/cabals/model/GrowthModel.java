@@ -108,8 +108,8 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				
 				// Randomize the stand height and get the dbh
 				double min = (evh.getMin() > 2) ? evh.getMin() : 2;
-				double max = (evh.getMax() < reference.getMaximumHeight()) ? evh.getMax() : reference.getMaximumHeight(); 
-				double treeHeight = min + (max - min) * random.nextDouble();
+				double treeHeight = min + (evh.getMax() - min) * random.nextDouble();
+				treeHeight = (reference.getMaximumHeight() < treeHeight) ? reference.getMaximumHeight() : treeHeight;	// Prevent sizes greater than the species
 				double dbh = reference.heightToDbh(treeHeight);
 				if (dbh == -1) {
 					throw new IllegalArgumentException("Result of heightToDbh cannot be -1, height: " + treeHeight);
@@ -117,15 +117,13 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				
 				// Use the DBH and cover min/max bounds to approximate the number of trees, note we assume the pixel is 30x30 meters
 				min = Math.floor((900 * evc.getMin()) / (Math.PI * Math.pow(dbh / 10, 2)));
-				max = Math.ceil((900 * evc.getMax()) / (Math.PI * Math.pow(dbh / 10, 2)));
+				double max = Math.ceil((900 * evc.getMax()) / (Math.PI * Math.pow(dbh / 10, 2)));
 				int count = random.nextInt((int)(max - min) + 1) + (int)min;
 				
 				// Set the values on the grids
 				dbhGrid.set(ndx, ndy, dbh);
 				countGrid.set(ndx, ndy, count);
 				ageGrid.set(ndx, ndy, (int)(dbh / reference.getDbhGrowth()));
-				
-				Log.fine("DBH: " + dbh + ", Count: " + count);
 			}
 		}
 		

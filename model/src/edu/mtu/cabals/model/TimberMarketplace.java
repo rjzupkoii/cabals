@@ -4,11 +4,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
-import java.util.Random;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 
+import ec.util.MersenneTwisterFast;
 import edu.mtu.cabals.model.marketplace.Harvester;
 import edu.mtu.cabals.wup.WupSpecies;
 import edu.mtu.environment.Stand;
@@ -83,7 +83,8 @@ public class TimberMarketplace {
 	 * Return true if the DBH is saw log, false otherwise, assumed getPrice() has already been called.
 	 */
 	private boolean isSawLog(WupSpecies species, double dbh) {
-		Double[][] chart = prices.get(species.getName());
+		String key = species.getName().toUpperCase();
+		Double[][] chart = prices.get(key);
 		return (dbh >= chart[Sawlog][Size]);
 	}
 		
@@ -114,7 +115,7 @@ public class TimberMarketplace {
 	/**
 	 * Load the prices file for the timber marketplace.
 	 */
-	public void load(String fileName, Random random) {
+	public void load(String fileName, MersenneTwisterFast random) {
 		try {
 			// Setup the read
 			Reader reader = new FileReader(fileName);
@@ -159,14 +160,16 @@ public class TimberMarketplace {
 	 * Set the current pulpwood market price for the given species.
 	 */
 	public void setPulpwoodPrice(WupSpecies species, double price) {
-		prices.get(species.getName())[Pulpwood][Price] = price;
+		String key = species.getName().toUpperCase();
+		prices.get(key)[Pulpwood][Price] = price;
 	}
 	
 	/**
 	 * Set the current sawlog market price for the given species.
 	 */
 	public void setSawlogPrice(WupSpecies species, double price) {
-		prices.get(species.getName())[Sawlog][Price] = price;
+		String key = species.getName().toUpperCase();
+		prices.get(key)[Sawlog][Price] = price;
 	}
 
 	/**
