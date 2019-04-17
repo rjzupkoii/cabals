@@ -198,6 +198,7 @@ public abstract class Harvester {
 		return report;
 	}
 	
+	// Calculate how long we expect the harvest to take, rounded to the near nearest hundreds place
 	private double harvestDuration(double merchantable) {
 		Parameters parameters = WupModel.getParameters();
 		
