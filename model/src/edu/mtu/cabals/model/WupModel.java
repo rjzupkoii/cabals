@@ -43,7 +43,6 @@ public class WupModel extends ForestSim {
 	private Scorecard scorecard = null;
 	
 	private static IntGrid2D visualBuffer;
-	private static IntGrid2D wetlands;
 	
 	private Map<Integer, ParcelAgent> owners;
 	
@@ -57,7 +56,6 @@ public class WupModel extends ForestSim {
 		try {
 			Parameters parameters = WupModel.getParameters();
 			visualBuffer = GisUtility.importRaster(parameters.getVisualBufferRaster());
-			wetlands = GisUtility.importRaster(parameters.getWetlandsRaster());
 		} catch (FileNotFoundException ex) {
 			System.err.println(ex);
 			System.exit(-1);
@@ -249,11 +247,7 @@ public class WupModel extends ForestSim {
 	public static IntGrid2D getVisualBuffer() {
 		return visualBuffer;
 	}
-	
-	public static IntGrid2D getWetlands() {
-		return wetlands;
-	}
-	
+		
 	public static Parameters getParameters() {
 		// Load the parameters if need be
 		if (parameters == null) {

@@ -1,4 +1,5 @@
 /bin/
 /data/gis
+/gis
 /lib/ForestSim*.jar
-
+.DS_Store

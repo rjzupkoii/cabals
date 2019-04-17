@@ -162,7 +162,7 @@ public abstract class Harvester {
 
 		// Get the reference GIS files
 		IntGrid2D visualBuffer = WupModel.getVisualBuffer();
-		IntGrid2D wetlands = WupModel.getWetlands();
+		IntGrid2D wetlands = (IntGrid2D)Forest.getInstance().getLandCover().getGrid();
 		
 		// Perform the initial harvest of the patch
 		Forest forest = Forest.getInstance();

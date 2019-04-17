@@ -14,7 +14,6 @@ public class Parameters extends ParameterBase {
 	private String landfireHeightRaster;
 	private String landfireCoverRaster;
 	private String visualBufferRaster;
-	private String wetlandsRaster;
 
 	// Harvesting settings
 	private double merchantableProductivity;
@@ -96,10 +95,6 @@ public class Parameters extends ParameterBase {
 	
 	public String getVisualBufferRaster() {
 		return visualBufferRaster;
-	}
-
-	public String getWetlandsRaster() {
-		return wetlandsRaster;
 	}
 	
 	public double getMerchantableProductivity() {
@@ -196,10 +191,6 @@ public class Parameters extends ParameterBase {
 	
 	public void setVisualBufferRaster(String value) {
 		visualBufferRaster = value;
-	}
-
-	public void setWetlandsRaster(String value) {
-		wetlandsRaster = value;
 	}
 
 	public void setMerchantableProductivity(double value) {
