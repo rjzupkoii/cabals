@@ -90,14 +90,15 @@ public class TimberMarketplace {
 	/**
 	 * Get the current price for the species at the given dbh.
 	 */
-	public double getPrice(WupSpecies species, double dbh) {
+	public double getPrice(WupSpecies species, double dbh) throws ForestSimException {
 		// Do we have prices for the species?
-		if (!prices.containsKey(species.getName())) {
-			return 0;
+		String key = species.getName().toUpperCase();
+		if (!prices.containsKey(key)) {
+			throw new ForestSimException("Could not find the species in the marketplace, " + species.getName().toUpperCase());
 		}
 		
 		// Check the prices
-		Double[][] chart = prices.get(species.getName());
+		Double[][] chart = prices.get(key);
 		if (dbh < chart[Pulpwood][Size]) { return 0; }
 		if (chart[Pulpwood][Size] < dbh && dbh < chart[Sawlog][Size]) { return chart[Pulpwood][Price]; }
 		return chart[Sawlog][Price];
@@ -124,7 +125,7 @@ public class TimberMarketplace {
 			for (CSVRecord record : records) {
 				// Is this the CWD value?
 				String key = record.get("SPECIES");
-				if (key.equals("CWD")) {
+				if (key.equals("ALL")) {
 					woodyBiomassPrice = Double.parseDouble(record.get("MEAN"));
 					continue;
 				}
