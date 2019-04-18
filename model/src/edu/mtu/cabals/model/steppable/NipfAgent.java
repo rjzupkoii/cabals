@@ -25,7 +25,7 @@ public class NipfAgent extends WupAgent {
 		LandUseGeomWrapper lu = parcels.keySet().toArray(new LandUseGeomWrapper[0])[ndx];
 		
 		// Solicit a bid for it
-		HarvestBid bid = NipfHarvester.getInstance().requestBid(parcels.get(lu), targetHarvest, MinimumDbh);
+		HarvestBid bid = NipfHarvester.getInstance().requestBid(lu, parcels.get(lu), targetHarvest, MinimumDbh);
 			
 		// Request the harvest if the bid is high enough
 		if ((bid.bid / targetHarvest) > minimumProfit) {

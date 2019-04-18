@@ -55,22 +55,23 @@ public class TimberMarketplace {
 			
 			// If there was no price, assume it's just going to get chipped
 			if (price == 0) {
-				double biomass = species.getAboveGroundBiomass(stand.arithmeticMeanDiameter);
-				double bid = biomass * Harvester.DryToGreen * stand.numberOfTrees * woodyBiomassPrice;
-				return bid;
+				double biomass = species.getAboveGroundBiomass(stand.arithmeticMeanDiameter);		// kg
+				biomass = (biomass / 1000) * Harvester.DryToGreen * stand.numberOfTrees;			// stand green tons
+				double bid = biomass * woodyBiomassPrice;
+				return Math.round(bid * 100d) / 100d;										// TODO Add to util
 			}
 	
 			// Are we looking at saw logs?
 			if (isSawLog(species, stand.arithmeticMeanDiameter)) {
 				double dib = (stand.arithmeticMeanDiameter - species.getBarkThickness() * 2) / Constants.InchToCentimeter;
-				double length = (species.getHeight(stand.arithmeticMeanDiameter) / Constants.InchToCentimeter) / 12;
+				double length = species.getHeight(stand.arithmeticMeanDiameter) * 3.281;	// TODO Add to constants
 				double bid = price * (TimberMeasures.scribnerLogRule(dib, length) * stand.numberOfTrees) / 1000;
-				return bid;
+				return Math.round(bid * 100d) / 100d;
 			}
 			
 			// Must have been pulpwood
 			double bid = TimberMeasures.metricDbhToCord(stand.arithmeticMeanDiameter) * stand.numberOfTrees * price;
-			return bid;
+			return Math.round(bid * 100d) / 100d;
 			
 		} catch (ForestSimException ex) {
 			System.err.println(ex);

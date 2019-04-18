@@ -15,6 +15,7 @@ import edu.mtu.environment.Forest;
 import edu.mtu.environment.NlcdClassification;
 import edu.mtu.environment.Stand;
 import edu.mtu.steppables.LandUseGeomWrapper;
+import sim.field.geo.GeomGridField;
 import sim.field.grid.IntGrid2D;
 
 /**
@@ -36,41 +37,50 @@ public abstract class Harvester {
 	/**
 	 * Find the most mature patch in the given parcel that matches the size.
 	 * 
+	 * @param lu The geometry used to map the bounds.
 	 * @param parcel The parcel to examine.
 	 * @param patch The size (ha) of the patch to be harvested.
 	 * @param dbh The minimum DBH (cm) of the trees.
 	 * @return The points in the patch, or null if a match cannot be found.
 	 */
-	protected List<Point> findPatch(final Point[] parcel, double patch, double dbh) {
-				
+	protected List<Point> findPatch(final LandUseGeomWrapper lu, Point[] parcel, double patch, double dbh) {
+						
 		// If the patch is greater than or equal to the size of the parcel, just return it
-		double width = Math.sqrt(Forest.getInstance().getPixelArea());		// Assume square pixels
-		double area = (parcel.length * Math.pow(width, 2)) / 10000;
+		Forest forest = Forest.getInstance();
+		double pixel = forest.getPixelArea();								// sq.m
+		double area = (parcel.length * pixel) / 10000;
 		if (area <= patch) {
 			return Arrays.asList(parcel);
 		}
 		
-		// Start by finding our bounds
-		int xMin = Integer.MAX_VALUE, yMin = Integer.MAX_VALUE, xMax = Integer.MIN_VALUE, yMax = Integer.MIN_VALUE;
-		for (Point point : parcel) {
-			xMin = (xMin < point.x) ? xMin : point.x;
-			yMin = (yMin < point.y) ? yMin : point.y;
-			xMax = (xMax > point.x) ? xMax : point.x;
-			yMax = (yMax > point.y) ? yMax : point.y;
-		}
-		
+		// The bounding rectangle of the agent's parcel converted to an IntGrid2D index (min and max)
+		GeomGridField cover = Forest.getInstance().getLandCover();
+		int xMin = cover.toXCoord(lu.geometry.getEnvelopeInternal().getMinX());
+		int yMin = cover.toYCoord(lu.geometry.getEnvelopeInternal().getMinY());
+		int xMax = cover.toXCoord(lu.geometry.getEnvelopeInternal().getMaxX());
+		int yMax = cover.toYCoord(lu.geometry.getEnvelopeInternal().getMaxY());
+				
 		// Use the bounds to setup our grids
-		int divisor = (int)Math.floor(10000 / width);						// 1 ha / pixel size in m
-		int xBound = (int)Math.ceil((xMax - xMin) / divisor);
-		int yBound = (int)Math.ceil((yMax - yMin) / divisor);
+		double divisor = (int)Math.ceil(10000 / pixel);						// ha / sq.m
+		int xBound = (int)Math.ceil(Math.abs(xMin - xMax) / divisor) + 1;
+		int yBound = (int)Math.ceil(Math.abs(yMin - yMax) / divisor) + 1;
 		Cell[][] patches = new Cell[xBound][yBound];
+		for (int ndx = 0; ndx < xBound; ndx++) {
+			for (int ndy = 0; ndy < yBound; ndy++) {
+				patches[ndx][ndy] = new Harvester.Cell();
+			}
+		}
 		double[][] meanDbh = new double[xBound][yBound];
 		
+		// Since we don't really care about the orientation of the map, make sure we are
+		// using the actual minimum values
+		xMin = Math.min(xMin, xMax);
+		yMin = Math.min(yMin, yMax);
+		
 		// Iterate through the points, sum the DBH and assign points to patches
-		Forest forest = Forest.getInstance();
 		for (Point point : parcel) {
-			int x = point.x % divisor;
-			int y = point.y % divisor;
+			int x = (int)Math.floor(Math.abs(point.x - xMin) / divisor);
+			int y = (int)Math.floor(Math.abs(point.y - yMin) / divisor);
 			patches[x][y].points.add(point);
 			
 			// Only add the DBH if it is greater than or equal to our target 
@@ -177,11 +187,12 @@ public abstract class Harvester {
 		report.harvestedArea = (patch.size() * area) / 10000;		// sq.m to ha
 		
 		// Check to see what the impacts are via GIS
+		final int wetlandsCode = NlcdClassification.WoodyWetlands.getValue();
 		for (Point point : patch) {
-			if (visualBuffer.get(point.x, point.y) != 0) {
+			if (visualBuffer.get(point.x, point.y) == 0) {
 				report.visualImpact += area;
 			}
-			if (wetlands.get(point.x, point.y) == NlcdClassification.WoodyWetlands.getValue()) {
+			if (wetlands.get(point.x, point.y) == wetlandsCode) {
 				report.wetlandImpact += area;
 			}
 		}
@@ -232,20 +243,21 @@ public abstract class Harvester {
 	/**
 	 * Request a bit from the harvester for the given parcel and patch size.
 	 * 
+	 * @param lu The geometry used to map the bounds.
 	 * @param parcel The parcel to request the bid on.
 	 * @param patch The size (ha) of the patch to be harvested.
 	 * @param dbh The minimum DBH of the harvest.
 	 * @return The bid and the patch being bid on.
 	 */
-	public HarvestBid requestBid(Point[] parcel, double patch, double dbh) {
+	public HarvestBid requestBid(LandUseGeomWrapper lu, Point[] parcel, double patch, double dbh) {
 		// Find a patch with the given size
-		List<Point> points = findPatch(parcel, patch, dbh);
-		if (points == null) {
-			return null;
+		HarvestBid bid = new HarvestBid();
+		List<Point> points = findPatch(lu, parcel, patch, dbh);
+		if (points == null || points.size() == 0) {
+			return bid;
 		}
 		
 		// Prepare the bid
-		HarvestBid bid = new HarvestBid();
 		bid.patch = points;
 		
 		// Calculate the stumpage
@@ -270,6 +282,8 @@ public abstract class Harvester {
 	 * Update the annual harvest report with the harvest.
 	 */
 	protected void update(HarvestReport harvest, boolean biomassCollected) {
+		// TODO Add rounding
+		
 		annualReport.biomass += harvest.biomass;
 		annualReport.merchantable += harvest.merchantable;
 		annualReport.cwd += harvest.cwd;

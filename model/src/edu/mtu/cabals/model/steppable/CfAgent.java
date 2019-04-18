@@ -8,6 +8,8 @@ import edu.mtu.steppables.ParcelAgentType;
 @SuppressWarnings("serial")
 public class CfAgent extends WupAgent {
 
+	// TODO For LARGE owners they may need multiple parcels to hit the target patch - add this as a recursive call on doHarvest
+	
 	private double targetPatch;
 	private int years;
 	
@@ -31,7 +33,7 @@ public class CfAgent extends WupAgent {
 		for (LandUseGeomWrapper lu : parcels.keySet()) {
 			
 			double patch = (lu.getDoubleAttribute("AREA_HA") < targetPatch) ? lu.getDoubleAttribute("AREA_HA") : targetPatch;
-			HarvestBid bid = harvester.requestBid(parcels.get(lu), patch, MinimumDbh);
+			HarvestBid bid = harvester.requestBid(lu, parcels.get(lu), patch, MinimumDbh);
 
 			// Is this bid irrelevant?
 			if (bid.bid == 0 || (bestBid != null && bid.bid < bestBid.bid)) {

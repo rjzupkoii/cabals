@@ -37,6 +37,8 @@ import sim.util.geo.AttributeValue;
 @SuppressWarnings("serial")
 public class WupModel extends ForestSim {
 
+	// TODO Check for any more gaussian issues
+	
 	private static Logger Log = Logger.getLogger(GrowthModel.class.getName());
 	
 	private static Parameters parameters = null;
@@ -174,22 +176,25 @@ public class WupModel extends ForestSim {
 	protected ParcelAgent createNifpAgent(LandUseGeomWrapper lu) {
 		NipfAgent agent = new NipfAgent(ParcelAgentType.OTHER, lu);
 		
-		// Set patch size
+		// Set patch size, note Gaussian means it can be zero
 		double mean = parameters.getNipfStandMean();
 		double sd = parameters.getNipfStandSd();
 		double value = random.nextGaussian() * sd + mean;
+		value = (value > 0) ? value : 0;
 		agent.setTargetHarvest(value);
 		
-		// Set target profit
+		// Set target profit, note Gaussian means it can be zero
 		mean = parameters.getNipfProfitMean();
 		sd = parameters.getNipfProfitSd();
 		value = random.nextGaussian() * sd + mean;
+		value = (value > 0) ? value : 0;
 		agent.setMinimumProfit(value);
 		
-		// Set woody biomass target
+		// Set woody biomass target, note Gaussian means it can be zero
 		mean = parameters.getNipfWoodyBiomassMean();
 		sd = parameters.getNipfWoodyBiomassSd();
 		value = random.nextGaussian() * sd + mean;
+		value = (value > 0) ? value : 0;
 		agent.setWoodyBiomassBid(value);
 		
 		return agent;

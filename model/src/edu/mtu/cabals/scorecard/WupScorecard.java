@@ -13,6 +13,8 @@ import edu.mtu.utilities.BufferedCsvWriter;
 
 public class WupScorecard implements Scorecard {
 
+	// TODO Round results off
+	
 	private BufferedCsvWriter[] writers;
 	private String directory;
 	
@@ -32,6 +34,7 @@ public class WupScorecard implements Scorecard {
 		}
 	}
 
+	// TODO Write headers?
 	@Override
 	public void processInitialization(ForestSim state) {
 		try {
@@ -53,6 +56,9 @@ public class WupScorecard implements Scorecard {
 	public void processTimeStep(ForestSim state) {
 		try {
 			collectHarvestReports();
+			for (Indicators indicator : Indicators.values()) {
+				writers[indicator.index()].flush();
+			}	
 		} catch (IOException ex) {
 			System.err.println(ex);
 			System.exit(-1);
