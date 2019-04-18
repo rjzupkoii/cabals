@@ -1,0 +1,1 @@
+ java -Xms4G -XX:+UseG1GC -jar CABALS.jar
