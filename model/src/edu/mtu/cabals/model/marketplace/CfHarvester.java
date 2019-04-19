@@ -29,8 +29,9 @@ public class CfHarvester extends Harvester {
 	 * 
 	 * @param lu The parcel that is being harvested.
 	 * @param patch The points that make up the patch.
+	 * @return The total area harvested, in ha
 	 */
-	public void requestHarvest(LandUseGeomWrapper lu, List<Point> patch) {
+	public double requestHarvest(LandUseGeomWrapper lu, List<Point> patch) {
 		
 		// Conduct the harvest
 		HarvestReport report = harvest(lu, patch);
@@ -45,6 +46,9 @@ public class CfHarvester extends Harvester {
 		
 		// Update the annual report
 		update(report, biomassCollected);
+		
+		// Return the harvest area
+		return report.harvestedArea;
 	}
 	
 	public boolean underContract() {

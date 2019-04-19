@@ -99,7 +99,16 @@ public abstract class Harvester {
 		double max = Double.MIN_VALUE;
 		for (int ndx = 0; ndx < meanDbh.length; ndx++) {
 			for (int ndy = 0; ndy < meanDbh[ndx].length; ndy++) {
+				
+				// Find the average for the square, if it is less than our target
+				// then set the square to zero to reserve it for another year
 				meanDbh[ndx][ndy] /= patches[ndx][ndy].points.size();
+				if (meanDbh[ndx][ndy] < dbh) {
+					meanDbh[ndx][ndy] = 0;
+					continue;
+				}
+				
+				// Check to see if this is a good starting point
 				if (meanDbh[ndx][ndy] > max) {
 					max = meanDbh[ndx][ndy];
 					x = ndx;

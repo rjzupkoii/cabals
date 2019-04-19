@@ -11,6 +11,8 @@ import edu.mtu.steppables.ParcelAgentType;
 @SuppressWarnings("serial")
 public abstract class WupAgent extends ParcelAgent {
 
+	private double minimumDbh;
+	
 	protected Map<LandUseGeomWrapper, Point[]> parcels;
 		
 	public WupAgent(ParcelAgentType type, LandUseGeomWrapper lu) {
@@ -25,4 +27,11 @@ public abstract class WupAgent extends ParcelAgent {
 	public void addParcel(LandUseGeomWrapper lu, Point[] points) {
 		parcels.put(lu, points);
 	}
+	
+	protected double getMinimumDbh() { return minimumDbh; }
+	
+	/**
+	 * The minimum DBH, in cm, the agent should harvest.
+	 */
+	public void setMinimumDbh(double value) { minimumDbh = value; }
 }

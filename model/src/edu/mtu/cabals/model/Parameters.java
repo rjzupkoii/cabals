@@ -29,10 +29,13 @@ public class Parameters extends ParameterBase {
 	private double kmPerLiter;
 		
 	// CF settings
+	private double cfMinimumDbh;
+	private double cfReserve;
 	private int cfYears;
 	
 	// NIPF settings
 	private double nipfHarvestHours;
+	private double nipfMinimumDbh;
 	private double nipfProfitMean, nipfProfitSd;
 	private double nipfStandMean, nipfStandSd;
 	private double nipfWoodyBiomassMean, nipfWoodyBiomassSd;
@@ -133,6 +136,18 @@ public class Parameters extends ParameterBase {
 		return chipVanCapacity;
 	}
 	
+	public double getCfMinimumDbh() {
+		return cfMinimumDbh;
+	}
+
+	public double getCfReserve() {
+		return cfReserve;
+	}
+
+	public double getNipfMinimumDbh() {
+		return nipfMinimumDbh;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -177,7 +192,7 @@ public class Parameters extends ParameterBase {
 		cfYears = value;
 	}
 
-	public void setmarkup(double value) {
+	public void setMarkup(double value) {
 		markup = value;
 	}
 
@@ -227,5 +242,17 @@ public class Parameters extends ParameterBase {
 
 	public void setChipVanCapacity(double value) {
 		chipVanCapacity = value;
+	}
+
+	public void setCfMinimumDbh(double value) {
+		cfMinimumDbh = value;
+	}
+
+	public void setCfReserve(double value) {
+		cfReserve = value;
+	}
+
+	public void setNipfMinimumDbh(double value) {
+		nipfMinimumDbh = value;
 	}
 }

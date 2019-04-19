@@ -11,9 +11,7 @@ public class NipfAgent extends WupAgent {
 	private double minimumProfit;
 	private double targetHarvest;
 	private double woodyBiomassBid;
-		
-	private final static double MinimumDbh = 22.86;		// White pine saw timber, allows bids for pulpwood
-	
+			
 	public NipfAgent(ParcelAgentType type, LandUseGeomWrapper lu) {
 		super(type, lu);
 	}
@@ -25,7 +23,7 @@ public class NipfAgent extends WupAgent {
 		LandUseGeomWrapper lu = parcels.keySet().toArray(new LandUseGeomWrapper[0])[ndx];
 		
 		// Solicit a bid for it
-		HarvestBid bid = NipfHarvester.getInstance().requestBid(lu, parcels.get(lu), targetHarvest, MinimumDbh);
+		HarvestBid bid = NipfHarvester.getInstance().requestBid(lu, parcels.get(lu), targetHarvest, getMinimumDbh());
 			
 		// Request the harvest if the bid is high enough
 		if ((bid.bid / targetHarvest) > minimumProfit) {

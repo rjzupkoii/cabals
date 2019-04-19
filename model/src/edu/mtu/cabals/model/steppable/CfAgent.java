@@ -7,14 +7,11 @@ import edu.mtu.steppables.ParcelAgentType;
 
 @SuppressWarnings("serial")
 public class CfAgent extends WupAgent {
-
-	// TODO For LARGE owners they may need multiple parcels to hit the target patch - add this as a recursive call on doHarvest
 	
+	private double reserve;
 	private double targetPatch;
 	private int years;
-	
-	private final static double MinimumDbh = 27.94;		// Red maple saw timber 
-	
+		
 	public CfAgent(ParcelAgentType type, LandUseGeomWrapper lu) {
 		super(type, lu);
 	}
@@ -24,6 +21,23 @@ public class CfAgent extends WupAgent {
 		// Make sure we have a patch size to work with
 		calculatePatch();
 
+		// Some industrial forests have significant land holdings in the WUP, so they 
+		// will need to harvest multiple parcels to hit their target
+		double target = targetPatch;
+		while (target > 0) {
+			// Attempt a harvest
+			double harvested = harvest(target);
+			target -= harvested;
+			
+			// If there was nothing worth harvesting, we are done for the year
+			if (harvested == 0) {
+				return;
+			}
+		}
+	}
+	
+	// Find a parcel patch to harvest up to the target size
+	private double harvest(double target) {
 		// Prepare for bidding
 		HarvestBid bestBid = null;
 		LandUseGeomWrapper bestParcel = null;
@@ -32,8 +46,8 @@ public class CfAgent extends WupAgent {
 		// Find the highest value patch based on stumpage
 		for (LandUseGeomWrapper lu : parcels.keySet()) {
 			
-			double patch = (lu.getDoubleAttribute("AREA_HA") < targetPatch) ? lu.getDoubleAttribute("AREA_HA") : targetPatch;
-			HarvestBid bid = harvester.requestBid(lu, parcels.get(lu), patch, MinimumDbh);
+			double patch = (lu.getDoubleAttribute("AREA_HA") < target) ? lu.getDoubleAttribute("AREA_HA") : target;
+			HarvestBid bid = harvester.requestBid(lu, parcels.get(lu), patch, getMinimumDbh());
 
 			// Is this bid irrelevant?
 			if (bid.bid == 0 || (bestBid != null && bid.bid < bestBid.bid)) {
@@ -47,8 +61,9 @@ public class CfAgent extends WupAgent {
 				
 		// Request the harvest if the patch is valid
 		if (bestBid != null) {
-			CfHarvester.getInstance().requestHarvest(bestParcel, bestBid.patch);
+			return CfHarvester.getInstance().requestHarvest(bestParcel, bestBid.patch);
 		}
+		return 0;		
 	}
 
 	@Override
@@ -74,8 +89,10 @@ public class CfAgent extends WupAgent {
 		}
 		
 		// Divide by the number of years we plan out for
-		targetPatch = sum / years;
+		targetPatch = (sum * reserve) / years;
 	}
 
 	public void setYears(int value) { years = value; }
+
+	public void setReserve(double value) { reserve = value; }
 }
