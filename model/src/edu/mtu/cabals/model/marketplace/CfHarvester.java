@@ -24,6 +24,11 @@ public class CfHarvester extends Harvester {
 		return instance;
 	}
 		
+	protected boolean atLimit() {
+		double labor = NipfHarvester.getInstance().report().labor + report().labor;
+		return (labor >= getAnnualHarvestLimit());
+	}
+	
 	/**
 	 * Harvest the given patch of land. 
 	 * 
@@ -32,6 +37,11 @@ public class CfHarvester extends Harvester {
 	 * @return The total area harvested, in ha
 	 */
 	public double requestHarvest(LandUseGeomWrapper lu, List<Point> patch) {
+		
+		// Have we hit the limit?
+		if (atLimit()) {
+			return 0;
+		}
 		
 		// Conduct the harvest
 		HarvestReport report = harvest(lu, patch);

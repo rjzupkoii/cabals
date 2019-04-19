@@ -212,10 +212,10 @@ public class WupModel extends ForestSim {
 		tm.load(parameters.getPricesFile(), random);
 		
 		CfHarvester.getInstance().setMarkup(parameters.getMarkup());
+		CfHarvester.getInstance().setAnnualHarvestLimit(parameters.getHarvestHours());
 		
-		NipfHarvester harvester = NipfHarvester.getInstance();
-		harvester.setMarkup(parameters.getMarkup());
-		harvester.setAnnualHarvestLimit(parameters.getNipfHarvestHours());
+		NipfHarvester.getInstance().setMarkup(parameters.getMarkup());
+		NipfHarvester.getInstance().setAnnualHarvestLimit(parameters.getHarvestHours());
 		
 		Transporter transporter = Transporter.getInstance();
 		transporter.setCapacity(parameters.getChipVanCapacity());

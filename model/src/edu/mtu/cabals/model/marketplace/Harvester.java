@@ -28,10 +28,11 @@ public abstract class Harvester {
 	// Multiplier to go from dry to green ton, based on Dulys-Nusbaum et al., 2019
 	public final static double DryToGreen = 2;
 	
+	private double annualLimit;
 	private double markup;
 	private double woodyBiomassRetention;
 	private HarvestReport annualReport = new HarvestReport();
-	
+		
 	private class Cell {
 		public ArrayList<Point> points = new ArrayList<Point>();
 	}
@@ -307,11 +308,24 @@ public abstract class Harvester {
 		}
 	}
 
-	public double getMarkup() { return markup; }
+	protected double getAnnualHarvestLimit() { return annualLimit; }
 	
-	public double getWoodyBiomassRetention() { return woodyBiomassRetention; }
+	protected double getMarkup() { return markup; }
+	
+	protected double getWoodyBiomassRetention() { return woodyBiomassRetention; }
 
+	/**
+	 * Set the annual limit to the number of hours NIPFs can harvest.
+	 */
+	public void setAnnualHarvestLimit(double value) { annualLimit = value; }
+	
+	/**
+	 * Set the margin for woody biomass profits.
+	 */
 	public void setMarkup(double value) { markup = value; }
 	
+	/**
+	 * Set the quantity of woody biomass that must be retained on site.
+	 */
 	public void setWoodyBiomassRetention(double value) { woodyBiomassRetention = value; }
 }

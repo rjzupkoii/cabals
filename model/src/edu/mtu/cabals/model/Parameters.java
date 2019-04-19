@@ -19,6 +19,7 @@ public class Parameters extends ParameterBase {
 	private double merchantableProductivity;
 	private double biomassChipping;
 	private double dieselPerLiter;
+	private double harvestHours;
 	private double loggerPerHour;	
 	private double markup;
 	
@@ -34,7 +35,6 @@ public class Parameters extends ParameterBase {
 	private int cfYears;
 	
 	// NIPF settings
-	private double nipfHarvestHours;
 	private double nipfMinimumDbh;
 	private double nipfProfitMean, nipfProfitSd;
 	private double nipfStandMean, nipfStandSd;
@@ -128,8 +128,8 @@ public class Parameters extends ParameterBase {
 		return kmPerHour;
 	}
 	
-	public double getNipfHarvestHours() {
-		return nipfHarvestHours;
+	public double getHarvestHours() {
+		return harvestHours;
 	}
 	
 	public double getChipVanCapacity() {
@@ -236,8 +236,8 @@ public class Parameters extends ParameterBase {
 		kmPerHour = value;
 	}
 
-	public void setNipfHarvestHours(double value) {
-		nipfHarvestHours = value;
+	public void setHarvestHours(double value) {
+		harvestHours = value;
 	}
 
 	public void setChipVanCapacity(double value) {
