@@ -37,12 +37,16 @@ public class WupScorecard implements Scorecard {
 	public void processInitialization(ForestSim state) {
 		try {
 			// Bootstrap any relevant paths
-			(new File(directory)).mkdirs();
-
+			File dir = new File(directory);
+			dir.mkdirs();
+						
+			// Count how many files are there already, use this for naming
+			int count = (int)(dir.listFiles().length / Indicators.values().length);
+			
 			// Create the buffered file writers
 			writers = new BufferedCsvWriter[Indicators.length];
 			for (Indicators indicator : Indicators.values()) {
-				writers[indicator.index()] = new BufferedCsvWriter(directory + indicator.path(), true);
+				writers[indicator.index()] = new BufferedCsvWriter(directory + String.format(indicator.path(), count), true);
 			}			
 			
 			// Write the headers
