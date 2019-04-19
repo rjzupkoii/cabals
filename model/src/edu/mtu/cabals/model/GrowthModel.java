@@ -100,12 +100,14 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				// Note the species
 				WupSpecies reference = (WupSpecies)getSpecies(nlcd);
 				
-				// Get the LANDFIRE bounds
+				// Get the LANDFIRE bounds, zero out the NLCD if we are out of parcel bounds
 				LandfireEvh evh = LandfireEvh.getEvh(wupEvh.get(ndx, ndy));
-				if (evh == null) { continue; }				
 				LandfireEvc evc = LandfireEvc.getEvc(wupEvc.get(ndx, ndy));
-				if (evc == null) { continue; }
-				
+				if (evh == null || evc == null) {
+					((IntGrid2D)landCover.getGrid()).set(ndx, ndy, 0);
+					continue;
+				}
+
 				// Randomize the stand height and get the dbh
 				double min = (evh.getMin() > 2) ? evh.getMin() : 2;
 				double treeHeight = min + (evh.getMax() - min) * random.nextDouble();
