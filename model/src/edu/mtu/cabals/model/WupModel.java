@@ -37,8 +37,6 @@ import sim.util.geo.AttributeValue;
 @SuppressWarnings("serial")
 public class WupModel extends ForestSim {
 
-	// TODO Check for any more gaussian issues
-	
 	private static Logger Log = Logger.getLogger(GrowthModel.class.getName());
 	
 	private static Parameters parameters = null;

@@ -15,6 +15,8 @@ import edu.mtu.environment.Forest;
 import edu.mtu.environment.NlcdClassification;
 import edu.mtu.environment.Stand;
 import edu.mtu.steppables.LandUseGeomWrapper;
+import edu.mtu.utilities.Constants;
+import edu.mtu.utilities.Precision;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.IntGrid2D;
 
@@ -47,8 +49,8 @@ public abstract class Harvester {
 						
 		// If the patch is greater than or equal to the size of the parcel, just return it
 		Forest forest = Forest.getInstance();
-		double pixel = forest.getPixelArea();								// sq.m
-		double area = (parcel.length * pixel) / 10000;
+		double pixel = forest.getPixelArea();		// sq.m
+		double area = (parcel.length * pixel) / Constants.SquareMetersToHectares;
 		if (area <= patch) {
 			return Arrays.asList(parcel);
 		}
@@ -61,7 +63,7 @@ public abstract class Harvester {
 		int yMax = cover.toYCoord(lu.geometry.getEnvelopeInternal().getMaxY());
 				
 		// Use the bounds to setup our grids
-		double divisor = (int)Math.ceil(10000 / pixel);						// ha / sq.m
+		double divisor = (int)Math.ceil(Constants.SquareMetersToHectares / pixel);		// ha / sq.m
 		int xBound = (int)Math.ceil(Math.abs(xMin - xMax) / divisor) + 1;
 		int yBound = (int)Math.ceil(Math.abs(yMin - yMax) / divisor) + 1;
 		Cell[][] patches = new Cell[xBound][yBound];
@@ -121,7 +123,7 @@ public abstract class Harvester {
 		
 		while (harvest < target) {
 			// Copy the points over and update the harvest
-			harvest += (patches[ndx][ndy].points.size() * area) / 10000;			// Harvest in ha 
+			harvest += (patches[ndx][ndy].points.size() * area) / Constants.SquareMetersToHectares; 
 			points.addAll(patches[ndx][ndy].points);
 			meanDbh[ndx][ndy] = 0;
 			
@@ -181,10 +183,10 @@ public abstract class Harvester {
 		// Update the report with the results of the harvest
 		HarvestReport report = new HarvestReport();
 		double area = forest.getPixelArea();
-		report.biomass = (results.getValue1() / 1000) * DryToGreen;					// Above Ground / 1000 for metric tons, converted to green tons
-		report.merchantable = (results.getValue0() / 1000) * DryToGreen;			// Stem / 1000 for metric tons, converted to green tons
-		report.cwd = report.biomass - report.merchantable;							// Above ground CWD produced, green tons
-		report.harvestedArea = (patch.size() * area) / 10000;		// sq.m to ha
+		report.biomass = (results.getValue1() / Constants.KilogramToMetricTon) * DryToGreen;			// Above Ground dry kg to green tons
+		report.merchantable = (results.getValue0() / Constants.KilogramToMetricTon) * DryToGreen;		// Stem dry kg converted to green tons
+		report.cwd = report.biomass - report.merchantable;												// Above ground woody biomass green tons
+		report.harvestedArea = (patch.size() * area) / Constants.SquareMetersToHectares;				// sq.m to ha
 		
 		// Check to see what the impacts are via GIS
 		final int wetlandsCode = NlcdClassification.WoodyWetlands.getValue();
@@ -196,8 +198,8 @@ public abstract class Harvester {
 				report.wetlandImpact += area;
 			}
 		}
-		report.visualImpact /= 10000;	// sq.m to ha
-		report.wetlandImpact /= 10000;	// sq.m to ha
+		report.visualImpact /= Constants.SquareMetersToHectares;	// sq.m to ha
+		report.wetlandImpact /= Constants.SquareMetersToHectares;	// sq.m to ha
 						
 		// Apply the economic calculations
 		report.labor = harvestDuration(report.merchantable);
@@ -214,8 +216,7 @@ public abstract class Harvester {
 		Parameters parameters = WupModel.getParameters();
 		
 		double hours = merchantable / parameters.getMerchantableProductivity();
-		hours = Math.round(hours * 100d) / 100d;
-		return hours;
+		return Precision.round(hours, 2);
 	}
 	
 	// Returns tuple of [labor hours, total cost]
@@ -282,8 +283,6 @@ public abstract class Harvester {
 	 * Update the annual harvest report with the harvest.
 	 */
 	protected void update(HarvestReport harvest, boolean biomassCollected) {
-		// TODO Add rounding
-		
 		annualReport.biomass += harvest.biomass;
 		annualReport.merchantable += harvest.merchantable;
 		annualReport.cwd += harvest.cwd;

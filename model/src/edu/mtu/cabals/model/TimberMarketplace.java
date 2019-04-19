@@ -15,6 +15,7 @@ import edu.mtu.environment.Stand;
 import edu.mtu.measures.TimberMeasures;
 import edu.mtu.simulation.ForestSimException;
 import edu.mtu.utilities.Constants;
+import edu.mtu.utilities.Precision;
 
 /**
  * The timber marketplace contains the basic price information and allows for 
@@ -23,6 +24,8 @@ import edu.mtu.utilities.Constants;
 public class TimberMarketplace {
 
 	private static TimberMarketplace instance;
+	
+	private final static int ThousandBoardFeet = 1000;
 	
 	private final static int Pulpwood = 0;
 	private final static int Sawlog = 1;
@@ -55,23 +58,23 @@ public class TimberMarketplace {
 			
 			// If there was no price, assume it's just going to get chipped
 			if (price == 0) {
-				double biomass = species.getAboveGroundBiomass(stand.arithmeticMeanDiameter);		// kg
-				biomass = (biomass / 1000) * Harvester.DryToGreen * stand.numberOfTrees;			// stand green tons
+				double biomass = species.getAboveGroundBiomass(stand.arithmeticMeanDiameter);						// kg
+				biomass = (biomass / Constants.KilogramToMetricTon) * Harvester.DryToGreen * stand.numberOfTrees;	// stand green tons
 				double bid = biomass * woodyBiomassPrice;
-				return Math.round(bid * 100d) / 100d;										// TODO Add to util
+				return Precision.round(bid, 2);
 			}
 	
 			// Are we looking at saw logs?
 			if (isSawLog(species, stand.arithmeticMeanDiameter)) {
 				double dib = (stand.arithmeticMeanDiameter - species.getBarkThickness() * 2) / Constants.InchToCentimeter;
-				double length = species.getHeight(stand.arithmeticMeanDiameter) * 3.281;	// TODO Add to constants
-				double bid = price * (TimberMeasures.scribnerLogRule(dib, length) * stand.numberOfTrees) / 1000;
-				return Math.round(bid * 100d) / 100d;
+				double length = species.getHeight(stand.arithmeticMeanDiameter) * Constants.MeterToFoot;
+				double bid = price * (TimberMeasures.scribnerLogRule(dib, length) * stand.numberOfTrees) / ThousandBoardFeet;
+				return Precision.round(bid, 2);
 			}
 			
 			// Must have been pulpwood
 			double bid = TimberMeasures.metricDbhToCord(stand.arithmeticMeanDiameter) * stand.numberOfTrees * price;
-			return Math.round(bid * 100d) / 100d;
+			return Precision.round(bid, 2);
 			
 		} catch (ForestSimException ex) {
 			System.err.println(ex);
@@ -145,8 +148,11 @@ public class TimberMarketplace {
 				// Note the correct index, note this can break easily as well
 				int index = record.get("PRODUCT").equals("SAWTIMBER") ? Sawlog : Pulpwood;
 				
-				// Create the record with a randomized value
+				// Create the record with a randomized value, but don't let it drop too much
 				double price = random.nextGaussian() * sd + mean;
+				double floor = mean - sd;
+				price = (price > floor) ? price : floor;
+				
 				prices.get(key)[index][Size] = dbh;
 				prices.get(key)[index][Price] = price;
 			}

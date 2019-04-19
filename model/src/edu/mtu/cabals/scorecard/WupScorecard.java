@@ -10,10 +10,9 @@ import edu.mtu.cabals.model.marketplace.Transporter;
 import edu.mtu.simulation.ForestSim;
 import edu.mtu.simulation.Scorecard;
 import edu.mtu.utilities.BufferedCsvWriter;
+import edu.mtu.utilities.Precision;
 
 public class WupScorecard implements Scorecard {
-
-	// TODO Round results off
 	
 	private BufferedCsvWriter[] writers;
 	private String directory;
@@ -33,8 +32,7 @@ public class WupScorecard implements Scorecard {
 			System.exit(-1);
 		}
 	}
-
-	// TODO Write headers?
+	
 	@Override
 	public void processInitialization(ForestSim state) {
 		try {
@@ -46,6 +44,12 @@ public class WupScorecard implements Scorecard {
 			for (Indicators indicator : Indicators.values()) {
 				writers[indicator.index()] = new BufferedCsvWriter(directory + indicator.path(), true);
 			}			
+			
+			// Write the headers
+			writeHarvestHeader(Indicators.NipfHarvesting.index());
+			writeHarvestHeader(Indicators.CfHarvesting.index());
+			writeTransportationheader(Indicators.Transport.index());
+			
 		} catch (IOException ex) {
 			System.err.println("Unhandled IOException: " + ex.toString());
 			System.exit(-1);
@@ -77,25 +81,56 @@ public class WupScorecard implements Scorecard {
 		writeTransportReport(Indicators.Transport.index());
 	}
 	
+	// Write the column headers for the harvest report
+	private void writeHarvestHeader(int index) throws IOException {
+		writers[index].write("Biomass");
+		writers[index].write("Merchantable");
+		writers[index].write("CWD");
+		
+		writers[index].write("Visual");
+		writers[index].write("Wetland");
+		
+		writers[index].write("Labor");
+		
+		writers[index].write("Recoverable");
+		writers[index].write("Labor");
+		
+		// Finish the line
+		writers[index].newLine();
+		writers[index].flush();
+	}
+	
+	// Write the actual data for the harvest report
 	private void writeHarvestReport(HarvestReport report, int index) throws IOException {
-		writers[index].write(report.biomass);
-		writers[index].write(report.merchantable);
-		writers[index].write(report.cwd);
+		writers[index].write(Precision.round(report.biomass, 2));
+		writers[index].write(Precision.round(report.merchantable, 2));
+		writers[index].write(Precision.round(report.cwd, 2));
 		
-		writers[index].write(report.visualImpact);
-		writers[index].write(report.wetlandImpact);
+		writers[index].write(Precision.round(report.visualImpact, 2));
+		writers[index].write(Precision.round(report.wetlandImpact, 2));
 		
-		writers[index].write(report.labor);
+		writers[index].write(Precision.round(report.labor, 2));
 		
-		writers[index].write(report.biomassRecoverable);
-		writers[index].write(report.biomassLabor);
+		writers[index].write(Precision.round(report.biomassRecoverable, 2));
+		writers[index].write(Precision.round(report.biomassLabor, 2));
 		writers[index].newLine();
 	}
 	
+	// Write the column headers for the transportation report
+	private void writeTransportationheader(int index) throws IOException {
+		writers[index].write("Distance");
+		writers[index].write("CWD");
+		
+		// Finish the line
+		writers[index].newLine();
+		writers[index].flush();
+	}
+	
+	// Write the actual data for the transportation report
 	private void writeTransportReport(int index) throws IOException {
 		Transporter transporter = Transporter.getInstance();
-		writers[index].write(transporter.getDistance());
-		writers[index].write(transporter.getWoodyBiomass());
+		writers[index].write(Precision.round(transporter.getDistance(), 2));
+		writers[index].write(Precision.round(transporter.getWoodyBiomass(), 2));
 		writers[index].newLine();
 		transporter.reset();
 	}
