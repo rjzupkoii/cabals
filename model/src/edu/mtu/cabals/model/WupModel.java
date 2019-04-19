@@ -46,6 +46,8 @@ public class WupModel extends ForestSim {
 	
 	private Map<Integer, ParcelAgent> owners;
 	
+	private int cf = 0, nipf = 0;
+	
 	public WupModel(long seed) {
 		super(seed);
 		
@@ -101,8 +103,15 @@ public class WupModel extends ForestSim {
 		}
 		setParcelAgents(agents);
 		
-		// Schedule all of the unique agents
-		for (int key : owners.keySet()) {
+		// Shuffle all of the owner ids and then schedule the agents
+		ArrayList<Integer> ids = new ArrayList<Integer>(owners.keySet());
+		for (int ndx = ids.size() - 1; ndx > 0; ndx--) {
+		      int index = random.nextInt(ndx + 1);
+		      int swap = ids.get(index);
+		      ids.set(index, ids.get(ndx));
+		      ids.set(ndx, swap);
+		    }
+		for (int key : ids) {
 			schedule.scheduleRepeating(owners.get(key));
 		}
 		
@@ -111,6 +120,7 @@ public class WupModel extends ForestSim {
 			String message = "WARNING: discarded " + discarded + " parcels due to invalid geometry.";
 			System.err.println(message);
 		}
+		System.err.println("CF: " + cf + ", NIPF: " + nipf);
 	}
 	
 	/**
@@ -136,9 +146,11 @@ public class WupModel extends ForestSim {
 			AttributeValue value = lu.getAttributes().get("type");
 			switch (value.getString()) {
 			case "CF": agent = createCfAgent(lu);
+			cf++;
 				break;
 			case "NIPF":
 			case "FF": agent = createNifpAgent(lu);
+			nipf++;
 				break;
 			default:
 				System.err.println("Unknown parcel type: " + value.getString());
