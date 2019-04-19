@@ -1,9 +1,9 @@
 package edu.mtu.cabals.scorecard;
 
 public enum Indicators {
-	CfHarvesting(0, "/CfHarvesting.csv"),
-	NipfHarvesting(1, "/NipfHarvesting.csv"),
-	Transport(2, "/Transport.csv");
+	CfHarvesting(0, "/CfHarvesting%d.csv"),
+	NipfHarvesting(1, "/NipfHarvesting%d.csv"),
+	Transport(2, "/Transport%d.csv");
 	
 	private int index;
 	private String path;
