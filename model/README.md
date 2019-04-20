@@ -1,6 +1,12 @@
+** Introduction **
+CABALS is an anagram from agent-based LCSA and is a collection of geographic information system (GIS) tools as well as an agent-based model (ABM) that was developed to assess the viability of woody-biomass based biofuels in the Western Upper Peninsula region of Michigan, USA. This model is based upon the MASON Multiagent Simulation Toolkit, GeoMason, and ForestSim. The model uses GIS data specific to the region and the author should be conducted in the event it is needed.   
+
+** Running CABALS **
+CABALS may be built using the pom.xml but requires that ForestSim 1.0.2 be install to the system Maven repository. Once built it will look for a configuration file located at data/settings.ini which contains additional information on GIS file locations, outputs, and so forth. The run.sh file is the easiest means of running the model since it has higher memory requirements than the base JVM configuration.
+
 **References**
 
-Burns, R. M., & Barbara, H. (1990). Silvics of North America: 1. conifers; 2. hardwoods. In Agriculture Handbook: Vol. 654. Washington, D.C.: United States Department of Agriculture, Forest Service. Retrived from https://www.srs.fs.usda.gov/pubs/misc/ag_654/table_of_contents.htm
+Burns, R. M., & Barbara, H. (1990). Silvics of North America: 1. conifers; 2. hardwoods. In Agriculture Handbook: Vol. 654. Washington, D.C.: United States Department of Agriculture, Forest Service. Retrieved from https://www.srs.fs.usda.gov/pubs/misc/ag_654/table_of_contents.htm
 
 Dixon, G. E., & Keyser, C. E. (2018). Lake States (LS) Variant Overview - Forest Vegetation Simulator (p. 53p) [Internal Rep]. Retrieved from U. S. Department of Agriculture, Forest Service, Forest Management Service Center website: https://www.fs.fed.us/fmsc/ftp/fvs/docs/overviews/FVSls_Overview.pdf
 
