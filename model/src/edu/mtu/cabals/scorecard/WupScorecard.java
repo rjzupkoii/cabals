@@ -13,7 +13,7 @@ import edu.mtu.utilities.BufferedCsvWriter;
 import edu.mtu.utilities.Precision;
 
 public class WupScorecard implements Scorecard {
-	
+		
 	private BufferedCsvWriter[] writers;
 	private String directory;
 	

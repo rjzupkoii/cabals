@@ -1,6 +1,8 @@
 /bin/
 /data/gis
 /gis
-/lib/ForestSim*.jar
+/lib/
 /out
+/target/
 .DS_Store
+cabals.jar

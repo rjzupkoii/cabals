@@ -6,10 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import ec.util.MersenneTwisterFast;
 import edu.mtu.cabals.model.marketplace.CfHarvester;
@@ -36,8 +32,6 @@ import sim.util.geo.AttributeValue;
 
 @SuppressWarnings("serial")
 public class WupModel extends ForestSim {
-
-	private static Logger Log = Logger.getLogger(GrowthModel.class.getName());
 	
 	private static Parameters parameters = null;
 	private Scorecard scorecard = null;
@@ -45,8 +39,6 @@ public class WupModel extends ForestSim {
 	private static IntGrid2D visualBuffer;
 	
 	private Map<Integer, ParcelAgent> owners;
-	
-	private int cf = 0, nipf = 0;
 	
 	public WupModel(long seed) {
 		super(seed);
@@ -120,7 +112,6 @@ public class WupModel extends ForestSim {
 			String message = "WARNING: discarded " + discarded + " parcels due to invalid geometry.";
 			System.err.println(message);
 		}
-		System.err.println("CF: " + cf + ", NIPF: " + nipf);
 	}
 	
 	/**
@@ -146,11 +137,9 @@ public class WupModel extends ForestSim {
 			AttributeValue value = lu.getAttributes().get("type");
 			switch (value.getString()) {
 			case "CF": agent = createCfAgent(lu);
-			cf++;
 				break;
 			case "NIPF":
 			case "FF": agent = createNifpAgent(lu);
-			nipf++;
 				break;
 			default:
 				System.err.println("Unknown parcel type: " + value.getString());
@@ -302,15 +291,7 @@ public class WupModel extends ForestSim {
 	}
 
 	@Override
-	public void initialize() {
-		// Set the logging
-		Log.setLevel(Level.ALL);
-		ConsoleHandler handler = new ConsoleHandler();
-		handler.setFormatter(new SimpleFormatter());
-		handler.setLevel(Level.ALL);
-		Log.addHandler(handler);
-		Log.fine("Logging initlized...");
-	}
+	public void initialize() { }
 
 	@Override
 	public boolean useAggregateHarvester() {

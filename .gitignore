@@ -8,3 +8,4 @@
 
 # Ignore intermediate files
 *.pyc
+/.DS_Store
