@@ -1,24 +1,24 @@
 #!/usr/local/bin/rscript
 
 require(matrixStats)
-require(gtools)
 
 PATH = 'analysis/'
 
 analysis <- function(file, prefix) {
 	data <- loadData(file);
-	
 	process(data, prefix);
 }
 
 process <- function(data, prefix) {
 
-	results <- data.frame();
-	
+	# Allocate the rows
+	rows <- dim(data[[1]])[1];
+	results <- matrix(nrow = rows)
+
 	for (name in names(data[[1]])) {   
 		# Start by combining each column into a single matrix
 		working <- lapply(data, function(item)item[[name]]);
-		working <- matrix(unlist(working), ncol = 50, byrow = TRUE);
+		working <- matrix(unlist(working), ncol = rows, byrow = TRUE);
 		
 		# Dump the data for the archive
 		write.csv(working, file = paste(PATH, prefix, name, '.csv', sep = ''), row.names = FALSE);
@@ -27,10 +27,12 @@ process <- function(data, prefix) {
 		df <- data.frame(colMeans(working), colSds(working));
 		names(df) <- c(paste(name, '.mean', sep = ''), paste(name, '.sd', sep = ''));
 		
-		results <- smartbind(results, df);	
+		# Append the results to the working data
+		results <- cbind(results, df)	
 	}
 	
-	str(results);
+	# Drop the first placeholder column created upon allocation
+	results <- results[, -1];
 	
 	# Dump the final results
 	write.csv(results, file = paste(PATH, prefix, '.csv', sep =''), row.names = TRUE);
@@ -46,8 +48,9 @@ loadData <- function(file) {
 	data <- lapply(files, read.csv);
 	
 	# Remove the last column, artifact of model
-	data <- lapply(data, function(item)item[, -9]);
-
+	col <- dim(data[[1]]);
+	data <- lapply(data, function(item)item[, -col]);
+	
 	# Return the data
 	return(data);
 }
@@ -55,5 +58,7 @@ loadData <- function(file) {
 dir.create(PATH, showWarnings = FALSE);
 
 analysis('CfHarvesting', 'CfOps');
+analysis('NipfHarvesting', 'NipfOps');
+analysis('Transport', 'TransportOps');
 
 print(paste('Results dumpped to ', PATH, sep = ''));
