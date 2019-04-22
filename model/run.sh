@@ -16,7 +16,7 @@ do
 	java -Xms4G -XX:+UseG1GC -jar cabals.jar -for 50 -repeat $repeat -time 10
 done
 date
- 
+
  # Restore sleep
 killall caffeinate
  

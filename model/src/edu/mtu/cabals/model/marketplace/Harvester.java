@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
-import edu.mtu.cabals.WupConstants;
 import edu.mtu.cabals.model.Parameters;
 import edu.mtu.cabals.model.TimberMarketplace;
 import edu.mtu.cabals.model.WupModel;
@@ -214,9 +213,9 @@ public abstract class Harvester {
 		// Apply the economic calculations
 		report.labor = harvestDuration(report.merchantable);
 		report.biomassRecoverable = report.cwd * (1 - woodyBiomassRetention);
-		results = biomassCosts(report.biomassRecoverable, lu.getDoubleAttribute("NEAR_KM"));
-		report.biomassLabor = results.getValue0();
-		report.biomassCost = results.getValue1();
+
+		// Apply the biomass costs and return
+		biomassCosts(report, lu.getDoubleAttribute("NEAR_KM"));
 		
 		return report;
 	}
@@ -229,23 +228,21 @@ public abstract class Harvester {
 		return Precision.round(hours, 2);
 	}
 	
-	// Returns tuple of [labor hours, total cost]
-	private Pair<Double, Double> biomassCosts(double biomass, double distance) {
+	// Calculate the costs assoicated with harvesting the biomass
+	private void biomassCosts(HarvestReport report, double distance) {
 		Parameters parameters = WupModel.getParameters();
 		
-		// Calculate total hours
-		double chippingHr = biomass / parameters.getBiomassChipping();
-		int trips = (int)Math.ceil(biomass / WupConstants.ChipVanCapacity); 
-		double chipVanHr = (distance * trips) / parameters.getKmPerHour();
-		double hours = chippingHr + chipVanHr;
+		report.loggerHours = Precision.round(report.biomassRecoverable / parameters.getBiomassChipping(), 2);
+		double loggerPay = report.loggerHours * parameters.getLoggerPerHour();
 		
-		// Calculate total costs
-		double fuel = ((distance * trips) / parameters.getKmPerLiter()) * parameters.getDieselPerLiter();
-		double costs = fuel + chippingHr * parameters.getLoggerPerHour() + chipVanHr * parameters.getDriverPerHour();
+		double totalDistance = Transporter.getTotalDistance(distance, report.biomassRecoverable);
+		report.driverHours = Precision.round(totalDistance / parameters.getKmPerHour(), 2);
+		double driverPay = report.driverHours * parameters.getDriverPerHour();
 		
-		return new Pair<Double, Double>(hours, costs);		
+		double fuelCost = (totalDistance / parameters.getKmPerLiter()) * parameters.getDieselPerLiter();
+		report.biomassCost = Precision.round(loggerPay + driverPay + fuelCost, 2);
 	}
-		
+	
 	/**
 	 * Get the report of harvesting.
 	 */
@@ -304,7 +301,8 @@ public abstract class Harvester {
 		
 		if (biomassCollected) {
 			annualReport.biomassRecoverable += harvest.biomassRecoverable;
-			annualReport.biomassLabor += harvest.biomassLabor;
+			annualReport.loggerHours += harvest.loggerHours;
+			annualReport.driverHours += harvest.driverHours;
 		}
 	}
 

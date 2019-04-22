@@ -12,6 +12,7 @@ public class HarvestReport {
 	public double labor;				// hours
 		
 	public double biomassRecoverable;	// projected green tons
-	public double biomassLabor;			// projected hours
+	public double loggerHours;			// projected hours chipping
+	public double driverHours;			// projected hours driving
 	public double biomassCost;			// projected dollars for collection and transport
 }

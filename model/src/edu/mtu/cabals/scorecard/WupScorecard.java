@@ -97,7 +97,8 @@ public class WupScorecard implements Scorecard {
 		writers[index].write("Labor");
 		
 		writers[index].write("Recoverable");
-		writers[index].write("Labor");
+		writers[index].write("LogerHours");
+		writers[index].write("DriverHours");
 		
 		// Finish the line
 		writers[index].newLine();
@@ -116,7 +117,8 @@ public class WupScorecard implements Scorecard {
 		writers[index].write(Precision.round(report.labor, 2));
 		
 		writers[index].write(Precision.round(report.biomassRecoverable, 2));
-		writers[index].write(Precision.round(report.biomassLabor, 2));
+		writers[index].write(Precision.round(report.loggerHours, 2));
+		writers[index].write(Precision.round(report.driverHours, 2));
 		writers[index].newLine();
 	}
 	

@@ -1,5 +1,7 @@
 package edu.mtu.cabals.model.marketplace;
 
+import edu.mtu.cabals.WupConstants;
+
 public class Transporter {
 
 	private static Transporter instance;	
@@ -30,23 +32,19 @@ public class Transporter {
 	}
 	
 	public void transport(double distance, double woodyBiomass) {
-		this.distance += distance;
+		this.distance += getTotalDistance(distance, woodyBiomass);
 		this.woodyBiomass += woodyBiomass;
 	}
-	
-	/**
-	 * Calculate the transport cost in total dollars.
-	 * 
-	 * @param distance to be driven (one-way) in km.
-	 * @param woodyBiomass to be transported (one-way) in.
-	 * @return Total payment for transport.
-	 */
-	public double transportCost(double distance, double woodyBiomass) {
-		double totalDistance = Math.ceil(woodyBiomass / capacity) * distance * 2;
-		double driverPay = (totalDistance / kmPerHour) * driverPerHour;
-		double fuelCost = (totalDistance / kmPerLiter) * dieselPerLiter;
 		
-		return (driverPay + fuelCost);
+	/**
+	 * Calculate the total distance that the biomass must be transported.
+	 * 
+	 * @param distance From work site to destination.
+	 * @param woodyBiomass To be transported via chip van.
+	 * @return Total distance traveled, round trip in km.
+	 */
+	public static double getTotalDistance(double distance, double woodyBiomass) {
+		return Math.ceil(woodyBiomass / WupConstants.ChipVanCapacity) * distance * 2;
 	}
 	
 	public double getCapacity() {
