@@ -89,15 +89,15 @@ public class WupScorecard implements Scorecard {
 	private void writeHarvestHeader(int index) throws IOException {
 		writers[index].write("Biomass");
 		writers[index].write("Merchantable");
-		writers[index].write("CWD");
+		writers[index].write("WoodyBiomass");
 		
 		writers[index].write("Visual");
 		writers[index].write("Wetland");
 		
 		writers[index].write("Labor");
 		
-		writers[index].write("Recoverable");
-		writers[index].write("LogerHours");
+		writers[index].write("BiomassSold");
+		writers[index].write("LoggerHours");
 		writers[index].write("DriverHours");
 		
 		// Finish the line
@@ -125,7 +125,7 @@ public class WupScorecard implements Scorecard {
 	// Write the column headers for the transportation report
 	private void writeTransportationheader(int index) throws IOException {
 		writers[index].write("Distance");
-		writers[index].write("CWD");
+		writers[index].write("Delivered");
 		
 		// Finish the line
 		writers[index].newLine();

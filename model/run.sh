@@ -5,7 +5,7 @@ echo "Preventing sleep during simulations"
 caffeinate &
  
 # Set the total runs
-total=10
+total=1
 repeat=10
  
 # Run the simulation
