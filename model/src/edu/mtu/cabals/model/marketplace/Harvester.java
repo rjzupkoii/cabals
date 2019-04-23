@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
+import ec.util.MersenneTwisterFast;
 import edu.mtu.cabals.model.Parameters;
 import edu.mtu.cabals.model.TimberMarketplace;
 import edu.mtu.cabals.model.WupModel;
@@ -24,12 +25,16 @@ import sim.field.grid.IntGrid2D;
  */
 public abstract class Harvester {
 	
+	// TODO Update the range for the variable mark-up to be set via the INI file
+	
 	// Multiplier to go from dry to green ton, based on Dulys-Nusbaum et al., 2019
 	public final static double DryToGreen = 2;
 	
 	private double annualLimit;
 	private double markup;
 	private double woodyBiomassRetention;
+	private MersenneTwisterFast random;
+	
 	private HarvestReport annualReport = new HarvestReport();
 		
 	private class Cell {
@@ -308,7 +313,16 @@ public abstract class Harvester {
 
 	protected double getAnnualHarvestLimit() { return annualLimit; }
 	
-	protected double getMarkup() { return markup; }
+	protected double getMarkup() { 
+			
+			// If the mark-up was set, return it
+			if (markup != 0) { return markup; }
+			
+			// Calculate a random value and return it
+			int value = 5 + random.nextInt(15);
+			return 1 + (double)value / 100.0;
+
+	}
 	
 	protected double getWoodyBiomassRetention() { return woodyBiomassRetention; }
 
@@ -321,6 +335,11 @@ public abstract class Harvester {
 	 * Set the margin for woody biomass profits.
 	 */
 	public void setMarkup(double value) { markup = value; }
+	
+	/**
+	 * Set the random number generator.
+	 */
+	public void setRandom(MersenneTwisterFast value) { random = value; }
 	
 	/**
 	 * Set the quantity of woody biomass that must be retained on site.
