@@ -22,6 +22,7 @@ public class Parameters extends ParameterBase {
 	private double harvestHours;
 	private double loggerPerHour;	
 	private double markup;
+	private double chipperFuel;
 	
 	// Transportation settings
 	private double chipVanCapacity;
@@ -148,6 +149,10 @@ public class Parameters extends ParameterBase {
 		return nipfMinimumDbh;
 	}
 	
+	public double getChipperFuel() {
+		return chipperFuel;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -254,5 +259,9 @@ public class Parameters extends ParameterBase {
 
 	public void setNipfMinimumDbh(double value) {
 		nipfMinimumDbh = value;
+	}
+	
+	public void setChipperFuel(double value) {
+		chipperFuel = value;
 	}
 }

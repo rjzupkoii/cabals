@@ -233,7 +233,7 @@ public abstract class Harvester {
 		return Precision.round(hours, 2);
 	}
 	
-	// Calculate the costs assoicated with harvesting the biomass
+	// Calculate the costs associated with harvesting the biomass
 	private void biomassCosts(HarvestReport report, double distance) {
 		Parameters parameters = WupModel.getParameters();
 		
@@ -244,7 +244,8 @@ public abstract class Harvester {
 		report.driverHours = Precision.round(totalDistance / parameters.getKmPerHour(), 2);
 		double driverPay = report.driverHours * parameters.getDriverPerHour();
 		
-		double fuelCost = (totalDistance / parameters.getKmPerLiter()) * parameters.getDieselPerLiter();
+		double fuelCost = report.loggerHours * parameters.getChipperFuel() * parameters.getDieselPerLiter();
+		fuelCost += (totalDistance / parameters.getKmPerLiter()) * parameters.getDieselPerLiter();
 		report.biomassCost = Precision.round(loggerPay + driverPay + fuelCost, 2);
 	}
 	
