@@ -12,7 +12,6 @@ public class Parameters extends ParameterBase {
 	private String parcelShapeFile;
 	private String nlcdRaster;
 	private String landfireHeightRaster;
-	private String landfireCoverRaster;
 	private String visualBufferRaster;
 
 	// Harvesting settings
@@ -53,11 +52,7 @@ public class Parameters extends ParameterBase {
 	public String getLandfireHeightRaster() {
 		return landfireHeightRaster;
 	}
-	
-	public String getLandfireCoverRaster() {
-		return landfireCoverRaster;
-	}
-	
+		
 	public String getOutputDirectory() {
 		return outputDirectory;
 	}
@@ -170,10 +165,6 @@ public class Parameters extends ParameterBase {
 		landfireHeightRaster = value;
 	}
 	
-	public void setLandfireCoverRaster(String value) {
-		landfireCoverRaster = value;
-	}
-
 	public void setOutputDirectory(String value) {
 		outputDirectory = value;
 	}
