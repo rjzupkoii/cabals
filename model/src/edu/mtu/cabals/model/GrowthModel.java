@@ -61,7 +61,8 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 		GeomGridField landCover = forest.getLandCover();
 		int height = forest.getMapHeight();
 		int width = forest.getMapWidth();
-
+		double acres = forest.getAcresPerPixel();
+		
 		// Load the stocking guides
 		stockingGuides = new HashMap<String, double[][]>();
 		WupSpecies key = new AcerRebrum();
@@ -79,7 +80,7 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 			System.err.println(ex);
 			System.exit(-1);
 		}
-
+		
 		// Calculate the initial stand based upon NLCD and LANDFIRE data
 		DoubleGrid2D dbhGrid = new DoubleGrid2D(width, height);
 		IntGrid2D ageGrid = new IntGrid2D(width, height);
@@ -117,6 +118,7 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				min = Math.floor((900 * evc.getMin()) / (Math.PI * Math.pow(dbh / 10, 2)));
 				double max = Math.ceil((900 * evc.getMax()) / (Math.PI * Math.pow(dbh / 10, 2)));
 				int count = random.nextInt((int)(max - min) + 1) + (int)min;
+				count = (int)(count * acres);
 				
 				// Set the values on the grids
 				dbhGrid.set(ndx, ndy, dbh);
@@ -159,13 +161,9 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 		
 		// Get species reference
 		WupSpecies species = (WupSpecies)stand.dominateSpecies;
-		
-		// Get the growth, assume that it is a normal distribution
-		double growth = random.nextGaussian() + species.getDbhGrowth();
-		growth = (growth > 0) ? growth : 0;
-		
-		// Apply the growth
-		stand.arithmeticMeanDiameter += growth;
+				
+		// Apply the growth, assume it is U(0, mean) and species cannot exceed max
+		stand.arithmeticMeanDiameter += (random.nextDouble() * species.getDbhGrowth());
 		stand.arithmeticMeanDiameter = (stand.arithmeticMeanDiameter > species.getMaximumDbh()) ? species.getMaximumDbh() : stand.arithmeticMeanDiameter;
 		stand.age++;
 		
