@@ -23,6 +23,7 @@ public class Parameters extends ParameterBase {
 	private double loggerPerHour;	
 	private double markup;
 	private double chipperFuel;
+	private double woodyBiomassRetention;
 	
 	// Transportation settings
 	private double chipVanCapacity;
@@ -153,6 +154,10 @@ public class Parameters extends ParameterBase {
 		return chipperFuel;
 	}
 	
+	public double getWoodyBiomassRetention() {
+		return woodyBiomassRetention;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -263,5 +268,9 @@ public class Parameters extends ParameterBase {
 	
 	public void setChipperFuel(double value) {
 		chipperFuel = value;
+	}
+
+	public void setWoodyBiomassRetention(double value) {
+		woodyBiomassRetention = value;
 	}
 }

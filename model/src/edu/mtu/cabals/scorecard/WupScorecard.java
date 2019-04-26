@@ -91,6 +91,7 @@ public class WupScorecard implements Scorecard {
 		writers[index].write("Merchantable");
 		writers[index].write("WoodyBiomass");
 		
+		writers[index].write("HarvestedArea");
 		writers[index].write("Visual");
 		writers[index].write("Wetland");
 		
@@ -111,6 +112,7 @@ public class WupScorecard implements Scorecard {
 		writers[index].write(Precision.round(report.merchantable, 2));
 		writers[index].write(Precision.round(report.cwd, 2));
 		
+		writers[index].write(Precision.round(report.harvestedArea, 2));
 		writers[index].write(Precision.round(report.visualImpact, 2));
 		writers[index].write(Precision.round(report.wetlandImpact, 2));
 		
@@ -119,6 +121,7 @@ public class WupScorecard implements Scorecard {
 		writers[index].write(Precision.round(report.biomassRecoverable, 2));
 		writers[index].write(Precision.round(report.loggerHours, 2));
 		writers[index].write(Precision.round(report.driverHours, 2));
+				
 		writers[index].newLine();
 	}
 	

@@ -90,10 +90,16 @@ public abstract class Harvester {
 			int y = (int)Math.floor(Math.abs(point.y - yMin) / divisor);
 			patches[x][y].points.add(point);
 			
+			Stand stand = forest.getStand(point);
+			
+			// If this point is woody wetlands then don't assign any value
+			if (stand.nlcd == NlcdClassification.WoodyWetlands.getValue()) {
+				continue;
+			}
+			
 			// Only add the DBH if it is greater than or equal to our target 
 			// minimum. This also introduces a penalty for the square when
 			// it contains a significant number of lower value stands
-			Stand stand = forest.getStand(point);
 			if (stand.arithmeticMeanDiameter >= dbh) {
 				meanDbh[x][y] += stand.arithmeticMeanDiameter;
 			}
@@ -300,6 +306,7 @@ public abstract class Harvester {
 		annualReport.merchantable += harvest.merchantable;
 		annualReport.cwd += harvest.cwd;
 		
+		annualReport.harvestedArea += harvest.harvestedArea;
 		annualReport.visualImpact += harvest.visualImpact;
 		annualReport.wetlandImpact += harvest.wetlandImpact;
 		
