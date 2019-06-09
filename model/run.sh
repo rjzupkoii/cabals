@@ -17,6 +17,8 @@ do
 done
 date
 
- # Restore sleep
+# Restore sleep
 killall caffeinate
- 
+
+# Notify user
+osascript -e 'display notification "Model complete!"' 
