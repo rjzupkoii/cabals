@@ -212,11 +212,15 @@ public class WupModel extends ForestSim {
 		TimberMarketplace tm = TimberMarketplace.getInstance();
 		tm.load(parameters.getPricesFile(), random);
 		
+		CfHarvester.getInstance().setRandom(random);
 		CfHarvester.getInstance().setMarkup(parameters.getMarkup());
 		CfHarvester.getInstance().setAnnualHarvestLimit(parameters.getHarvestHours());
+		CfHarvester.getInstance().setWoodyBiomassRetention(parameters.getWoodyBiomassRetention());
 		
+		NipfHarvester.getInstance().setRandom(random);
 		NipfHarvester.getInstance().setMarkup(parameters.getMarkup());
 		NipfHarvester.getInstance().setAnnualHarvestLimit(parameters.getHarvestHours());
+		NipfHarvester.getInstance().setWoodyBiomassRetention(parameters.getWoodyBiomassRetention());
 		
 		Transporter transporter = Transporter.getInstance();
 		transporter.setCapacity(parameters.getChipVanCapacity());

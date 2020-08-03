@@ -61,25 +61,27 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 		GeomGridField landCover = forest.getLandCover();
 		int height = forest.getMapHeight();
 		int width = forest.getMapWidth();
-
+		double acres = forest.getAcresPerPixel();
+		
 		// Load the stocking guides
 		stockingGuides = new HashMap<String, double[][]>();
 		WupSpecies key = new AcerRebrum();
-		stockingGuides.put(key.getName(), readStockingGuide(key.getDataFile(), forest.getAcresPerPixel()));
+		stockingGuides.put(key.getName(), readStockingGuide(key.getDataFile(), acres));
 		key = new PinusStrobus();
-		stockingGuides.put(key.getName(), readStockingGuide(key.getDataFile(), forest.getAcresPerPixel()));
+		stockingGuides.put(key.getName(), readStockingGuide(key.getDataFile(), acres));
+		key = new BetulaAlleghaniensis();
+		stockingGuides.put(key.getName(), readStockingGuide(key.getDataFile(), acres));
 		
 		// Load the LANDFIRE data, fail out if we can't
-		IntGrid2D wupEvc = null, wupEvh = null;
+		IntGrid2D wupEvh = null;
 		try {
 			Parameters parameters = WupModel.getParameters();
-			wupEvc = GisUtility.importRaster(parameters.getLandfireCoverRaster());
 			wupEvh = GisUtility.importRaster(parameters.getLandfireHeightRaster());
 		} catch (FileNotFoundException ex) {
 			System.err.println(ex);
 			System.exit(-1);
 		}
-
+		
 		// Calculate the initial stand based upon NLCD and LANDFIRE data
 		DoubleGrid2D dbhGrid = new DoubleGrid2D(width, height);
 		IntGrid2D ageGrid = new IntGrid2D(width, height);
@@ -98,8 +100,7 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				
 				// Get the LANDFIRE bounds, zero out the NLCD if we are out of parcel bounds
 				LandfireEvh evh = LandfireEvh.getEvh(wupEvh.get(ndx, ndy));
-				LandfireEvc evc = LandfireEvc.getEvc(wupEvc.get(ndx, ndy));
-				if (evh == null || evc == null) {
+				if (evh == null) {
 					((IntGrid2D)landCover.getGrid()).set(ndx, ndy, 0);
 					continue;
 				}
@@ -112,11 +113,9 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 				if (dbh == -1) {
 					throw new IllegalArgumentException("Result of heightToDbh cannot be -1, height: " + treeHeight);
 				}
-				
-				// Use the DBH and cover min/max bounds to approximate the number of trees, note we assume the pixel is 30x30 meters
-				min = Math.floor((900 * evc.getMin()) / (Math.PI * Math.pow(dbh / 10, 2)));
-				double max = Math.ceil((900 * evc.getMax()) / (Math.PI * Math.pow(dbh / 10, 2)));
-				int count = random.nextInt((int)(max - min) + 1) + (int)min;
+
+				// Use the stocking to determine the number of trees per pixel, results are pre-calculated per pixel
+				int count = calculateTargetStocking(reference, dbh);
 				
 				// Set the values on the grids
 				dbhGrid.set(ndx, ndy, dbh);
@@ -136,6 +135,34 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 		Forest.getInstance().setTreeCountMap(countGrid);
 		Forest.getInstance().setStandDiameterMap(standDiameter);
 
+	}
+	
+	/**
+	 * Determine the number of trees that a given stand should be seeded with.
+	 * 
+	 * @param species The species to reference.
+	 * @param dbh Mean DBH in cm for the stand.
+	 * @return The number of trees for the stand.
+	 */
+	public int calculateTargetStocking(WupSpecies species, double dbh) {
+		// Start by finding the guideline to use
+		double[][] stocking = stockingGuides.get(species.getName());
+		int ndx = 0;
+		for (; ndx < stocking.length; ndx++) {
+			// Scan until we find the break to use
+			if (dbh < stocking[ndx][0]) {
+				break;
+			}
+		}
+
+		// Find the value for fully stocked from the guide
+		int ideal = (int)(ndx > 0 ? stocking[ndx - 1][2] : stocking[0][2]); 
+		
+		// Adjust the value by +/- 20%
+		int skew = (int)(ideal * 0.2);
+		skew = random.nextInt(skew * 2 + 1) - skew;
+		int result = ideal + skew;
+		return result;
 	}
 
 	@Override
@@ -159,13 +186,9 @@ public class GrowthModel implements edu.mtu.environment.GrowthModel {
 		
 		// Get species reference
 		WupSpecies species = (WupSpecies)stand.dominateSpecies;
-		
-		// Get the growth, assume that it is a normal distribution
-		double growth = random.nextGaussian() + species.getDbhGrowth();
-		growth = (growth > 0) ? growth : 0;
-		
-		// Apply the growth
-		stand.arithmeticMeanDiameter += growth;
+				
+		// Apply the growth, assume it is U(0, mean) and species cannot exceed max
+		stand.arithmeticMeanDiameter += (random.nextDouble() * species.getDbhGrowth());
 		stand.arithmeticMeanDiameter = (stand.arithmeticMeanDiameter > species.getMaximumDbh()) ? species.getMaximumDbh() : stand.arithmeticMeanDiameter;
 		stand.age++;
 		

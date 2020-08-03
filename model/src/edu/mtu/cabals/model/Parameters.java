@@ -12,7 +12,6 @@ public class Parameters extends ParameterBase {
 	private String parcelShapeFile;
 	private String nlcdRaster;
 	private String landfireHeightRaster;
-	private String landfireCoverRaster;
 	private String visualBufferRaster;
 
 	// Harvesting settings
@@ -22,6 +21,8 @@ public class Parameters extends ParameterBase {
 	private double harvestHours;
 	private double loggerPerHour;	
 	private double markup;
+	private double chipperFuel;
+	private double woodyBiomassRetention;
 	
 	// Transportation settings
 	private double chipVanCapacity;
@@ -51,11 +52,7 @@ public class Parameters extends ParameterBase {
 	public String getLandfireHeightRaster() {
 		return landfireHeightRaster;
 	}
-	
-	public String getLandfireCoverRaster() {
-		return landfireCoverRaster;
-	}
-	
+		
 	public String getOutputDirectory() {
 		return outputDirectory;
 	}
@@ -148,6 +145,14 @@ public class Parameters extends ParameterBase {
 		return nipfMinimumDbh;
 	}
 	
+	public double getChipperFuel() {
+		return chipperFuel;
+	}
+	
+	public double getWoodyBiomassRetention() {
+		return woodyBiomassRetention;
+	}
+	
 	public void setParcelShapeFile(String value) {
 		parcelShapeFile = value;
 	}
@@ -160,10 +165,6 @@ public class Parameters extends ParameterBase {
 		landfireHeightRaster = value;
 	}
 	
-	public void setLandfireCoverRaster(String value) {
-		landfireCoverRaster = value;
-	}
-
 	public void setOutputDirectory(String value) {
 		outputDirectory = value;
 	}
@@ -254,5 +255,13 @@ public class Parameters extends ParameterBase {
 
 	public void setNipfMinimumDbh(double value) {
 		nipfMinimumDbh = value;
+	}
+	
+	public void setChipperFuel(double value) {
+		chipperFuel = value;
+	}
+
+	public void setWoodyBiomassRetention(double value) {
+		woodyBiomassRetention = value;
 	}
 }

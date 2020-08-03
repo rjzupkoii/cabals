@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.javatuples.Pair;
 
+import ec.util.MersenneTwisterFast;
 import edu.mtu.cabals.model.Parameters;
 import edu.mtu.cabals.model.TimberMarketplace;
 import edu.mtu.cabals.model.WupModel;
@@ -24,12 +25,16 @@ import sim.field.grid.IntGrid2D;
  */
 public abstract class Harvester {
 	
+	// TODO Update the range for the variable mark-up to be set via the INI file
+	
 	// Multiplier to go from dry to green ton, based on Dulys-Nusbaum et al., 2019
 	public final static double DryToGreen = 2;
 	
 	private double annualLimit;
 	private double markup;
 	private double woodyBiomassRetention;
+	private MersenneTwisterFast random;
+	
 	private HarvestReport annualReport = new HarvestReport();
 		
 	private class Cell {
@@ -85,10 +90,16 @@ public abstract class Harvester {
 			int y = (int)Math.floor(Math.abs(point.y - yMin) / divisor);
 			patches[x][y].points.add(point);
 			
+			Stand stand = forest.getStand(point);
+			
+			// If this point is woody wetlands then don't assign any value
+			if (stand.nlcd == NlcdClassification.WoodyWetlands.getValue()) {
+				continue;
+			}
+			
 			// Only add the DBH if it is greater than or equal to our target 
 			// minimum. This also introduces a penalty for the square when
 			// it contains a significant number of lower value stands
-			Stand stand = forest.getStand(point);
 			if (stand.arithmeticMeanDiameter >= dbh) {
 				meanDbh[x][y] += stand.arithmeticMeanDiameter;
 			}
@@ -228,7 +239,7 @@ public abstract class Harvester {
 		return Precision.round(hours, 2);
 	}
 	
-	// Calculate the costs assoicated with harvesting the biomass
+	// Calculate the costs associated with harvesting the biomass
 	private void biomassCosts(HarvestReport report, double distance) {
 		Parameters parameters = WupModel.getParameters();
 		
@@ -239,7 +250,8 @@ public abstract class Harvester {
 		report.driverHours = Precision.round(totalDistance / parameters.getKmPerHour(), 2);
 		double driverPay = report.driverHours * parameters.getDriverPerHour();
 		
-		double fuelCost = (totalDistance / parameters.getKmPerLiter()) * parameters.getDieselPerLiter();
+		double fuelCost = report.loggerHours * parameters.getChipperFuel() * parameters.getDieselPerLiter();
+		fuelCost += (totalDistance / parameters.getKmPerLiter()) * parameters.getDieselPerLiter();
 		report.biomassCost = Precision.round(loggerPay + driverPay + fuelCost, 2);
 	}
 	
@@ -294,6 +306,7 @@ public abstract class Harvester {
 		annualReport.merchantable += harvest.merchantable;
 		annualReport.cwd += harvest.cwd;
 		
+		annualReport.harvestedArea += harvest.harvestedArea;
 		annualReport.visualImpact += harvest.visualImpact;
 		annualReport.wetlandImpact += harvest.wetlandImpact;
 		
@@ -308,7 +321,16 @@ public abstract class Harvester {
 
 	protected double getAnnualHarvestLimit() { return annualLimit; }
 	
-	protected double getMarkup() { return markup; }
+	protected double getMarkup() { 
+			
+			// If the mark-up was set, return it
+			if (markup != 0) { return markup; }
+			
+			// Calculate a random value and return it
+			int value = 5 + random.nextInt(15);
+			return 1 + (double)value / 100.0;
+
+	}
 	
 	protected double getWoodyBiomassRetention() { return woodyBiomassRetention; }
 
@@ -321,6 +343,11 @@ public abstract class Harvester {
 	 * Set the margin for woody biomass profits.
 	 */
 	public void setMarkup(double value) { markup = value; }
+	
+	/**
+	 * Set the random number generator.
+	 */
+	public void setRandom(MersenneTwisterFast value) { random = value; }
 	
 	/**
 	 * Set the quantity of woody biomass that must be retained on site.

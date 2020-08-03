@@ -11,6 +11,7 @@ import org.apache.commons.csv.CSVRecord;
 import ec.util.MersenneTwisterFast;
 import edu.mtu.cabals.model.marketplace.Harvester;
 import edu.mtu.cabals.wup.WupSpecies;
+import edu.mtu.environment.NlcdClassification;
 import edu.mtu.environment.Stand;
 import edu.mtu.measures.TimberMeasures;
 import edu.mtu.simulation.ForestSimException;
@@ -52,6 +53,11 @@ public class TimberMarketplace {
 	 */
 	public double calculateBid(Stand stand) {
 		try {
+			// If this is wetlands, don't bid on it
+			if (stand.nlcd == NlcdClassification.WoodyWetlands.getValue()) {
+				return 0;
+			}
+			
 			// Start by getting the price
 			WupSpecies species = (WupSpecies)stand.dominateSpecies;
 			double price = getPrice(species, stand.arithmeticMeanDiameter);	
