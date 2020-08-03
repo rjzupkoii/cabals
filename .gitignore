@@ -2,6 +2,7 @@
 /gis/data/
 /gis/model/
 /gis/working/
+/gis
 
 # Ignore sensitive files
 /gis/scripts/settings.py
