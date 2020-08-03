@@ -16,7 +16,7 @@ wup_evh_utm.asc - Clipped version of [LANDFIRE](https://www.landfire.gov/) heigh
 wup_evc_utm.asc - Clipped version of LANDFIRE cover data (Rollins & Frame 2006). \
 wup_buff_utm.asc - A visual buffer file created by the author.
 
-In order to use the GIS data, the file `gis/gis.zip` needs to be extracte and the files moved to `model/data/gis` in accordance with the settings. The GIS data should be aligned correctly for use with ForestSim (i.e., same number of rows, columns, and reference point). 
+In order to use the GIS data, the file `gis/gis.zip` needs to be extracte and the files moved to `model/data/gis` in accordance with the settings. The GIS data should be aligned correctly for use with ForestSim (i.e., same number of rows, columns, and reference point). Note that while good compression is achived, when the files are decompressed they will be quite large.
 
 ### References
 Homer, C. G., Dewitz, J. A., Yang, L., Jin, S., Danielson, P., Xian, G., Coulston, J., Herold, N. D., Wickham, J. D., & Megown, K. (2015). Completion of the 2011 National Land Cover Database for the conterminous United States-Representing a decade of land cover change information. *Photogrammetric Engineering and Remote Sensing*, 81(5), 345–354.
