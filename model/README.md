@@ -1,7 +1,9 @@
-** Introduction **
+**Introduction**
+
 CABALS is an anagram from agent-based LCSA and is a collection of geographic information system (GIS) tools as well as an agent-based model (ABM) that was developed to assess the viability of woody-biomass based biofuels in the Western Upper Peninsula region of Michigan, USA. This model is based upon the MASON Multiagent Simulation Toolkit, GeoMason, and ForestSim. The model uses GIS data specific to the region and the author should be conducted in the event it is needed.   
 
-** Running CABALS **
+**Running CABALS**
+
 CABALS may be built using the pom.xml but requires that ForestSim 1.0.2 be install to the system Maven repository. Once built it will look for a configuration file located at data/settings.ini which contains additional information on GIS file locations, outputs, and so forth. The run.sh file is the easiest means of running the model since it has higher memory requirements than the base JVM configuration.
 
 **References**
