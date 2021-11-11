@@ -1,4 +1,4 @@
-# CABALS
+# CABALS: Agent-Based Life Cycle Sustainablity Assessment
 
 ## Introduction
 CABALS is an anagram of agent-based life cycle sustainablity assessment (agent-based LCSA) and is a research project into the integration of agent-based modeling (ABM) and LCSA. 
