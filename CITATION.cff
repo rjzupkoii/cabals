@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software or, please cite it as below. Otherwise, please cite the relevent publication"
+authors:
+- family-names: "Zupko"
+  given-names: "Robert"
+  orcid: "https://orcid.org/0000-0001-8757-483X"
+title: "cabals"
+version: 1.0.0
+date-released: 2020-08-03
+url: "https://github.com/rjzupkoii/cabals"
