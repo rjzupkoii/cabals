@@ -4,7 +4,7 @@ authors:
 - family-names: "Zupko"
   given-names: "Robert"
   orcid: "https://orcid.org/0000-0001-8757-483X"
-title: "cabals"
+title: "CABALS: Agent-Based Life Cycle Sustainablity Assessment"
 version: 1.0.0
 date-released: 2020-08-03
 url: "https://github.com/rjzupkoii/cabals"
