@@ -24,4 +24,6 @@ Homer, C. G., Dewitz, J. A., Yang, L., Jin, S., Danielson, P., Xian, G., Coulsto
 Rollins, M. G., & Frame, C. K. (2006). The LANDFIRE Prototype Project: Nationally consistent and locally relevant geospatial data for wildland fire management. Gen. Tech. Rep. RMRS-GTR-175. Fort Collins: US Department of Agriculture, Forest Service, Rocky Mountain Research Station. 416 p., 175.
 
 ### Publications
+Zupko, R., & Rouleau, M. (2019). ForestSim: Spatially explicit agent-based modeling of non-industrial forest owner policies. *SoftwareX*, 9, 117–125. https://doi.org/10.1016/j.softx.2019.01.008
+
 Zupko, R. (2021). Application of agent-based modeling and life cycle sustainability assessment to evaluate biorefinery placement. *Biomass and Bioenergy*, 144, 105916. https://doi.org/10.1016/j.biombioe.2020.105916
